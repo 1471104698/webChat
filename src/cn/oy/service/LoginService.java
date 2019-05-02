@@ -2,7 +2,9 @@ package cn.oy.service;
 
 import cn.oy.pojo.User;
 
-public interface CheckEmpty {
+public interface LoginService {
 	
 	User checkEmpty(String account,String pwd);
+	
+	boolean checkCode(String vcode, String ocode) ;
 }

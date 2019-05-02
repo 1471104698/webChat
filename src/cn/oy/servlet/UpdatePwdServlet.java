@@ -1,6 +1,8 @@
 package cn.oy.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,18 +28,19 @@ public class UpdatePwdServlet extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String newPwd=req.getParameter("newPwd");
+		String cfPwd=req.getParameter("cfPwd");
 		String account=(String) req.getSession().getAttribute("account");
-		
+		PrintWriter out =resp.getWriter();
 		UpdatePwdService ups=(UpdatePwdService) ioc.MapIoc.MAP.get("ups");
 		
-		int result=ups.updatePwd(newPwd, account);
+		int result=ups.updatePwd(newPwd,cfPwd,account);
 		if(result>0) {
-			req.setAttribute("str", "密码修改成功");
-			req.getRequestDispatcher("login.jsp").forward(req, resp);
+			out.print("true");	
+		}else if(result==-2) {
+			out.print("unsame");	
 		}else {
-			req.setAttribute("str", "密码修改失败");
-			req.getRequestDispatcher("user/updatePwd.jsp").forward(req, resp);
-		}
+			out.print("false");
+		}		
 	}
 
 }

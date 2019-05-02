@@ -1,6 +1,9 @@
 package cn.oy.pojo;
 
+import java.util.List;
+
 public class User {
+	private Integer id;
 	
 	private String name;
 	private String sex;
@@ -10,10 +13,12 @@ public class User {
 	private String iden;
 	private String pwd;
 	private String account;
-	
+	private List<Group> groups;
+	private List<User> friends;
+	private String nickName;
 	public User() {
 	}
-
+	
 	public User(String name, String sex, String signature, String tel, Integer age, String pwd, String account) {
 		super();
 		this.name = name;
@@ -39,6 +44,41 @@ public class User {
 	}
 
 	
+	
+
+
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public List<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
+	}
+
+	public List<User> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(List<User> friends) {
+		this.friends = friends;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public String getPwd() {
 		return pwd;
 	}
@@ -93,7 +133,8 @@ public class User {
 	}
 	@Override
 	public String toString() {
-		return "User [name=" + name + ", sex=" + sex + ", signature=" + signature + ", tel=" + tel + ", age=" + age
-				+ ", iden=" + iden + ", pwd=" + pwd + ", account=" + account + "]";
+		return "User [id=" + id + ", name=" + name + ", sex=" + sex + ", signature=" + signature + ", tel=" + tel
+				+ ", age=" + age + ", iden=" + iden + ", pwd=" + pwd + ", account=" + account + ", groups=" + groups
+				+ ", friends=" + friends + "]";
 	}
 }

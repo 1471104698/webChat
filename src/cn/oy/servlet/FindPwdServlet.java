@@ -1,6 +1,8 @@
 package cn.oy.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,18 +27,21 @@ public class FindPwdServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	PrintWriter out =resp.getWriter();
     	FindPwdService fps=(FindPwdService) ioc.MapIoc.MAP.get("fps");
     	String account=req.getParameter("account");
 		String name=req.getParameter("name");
-		String tel=req.getParameter("tel");	
+		String tel=req.getParameter("tel");		
     	int result=fps.FindService(account, name, tel);
+    	System.out.println("result="+result);
     	if(result>0) {
-    		req.getSession().setAttribute("account", account);
-			req.getRequestDispatcher("user/updatePwd.jsp").forward(req, resp);
+    		out.print("true");		
+        	req.getSession().setAttribute("account", account);
     	}else {
-    		req.setAttribute("str", "信息填写错误！！！");
-    		req.getRequestDispatcher("user/find.jsp").forward(req, resp);
+    		out.print("false");	
     	}
+
+    	
     }
 
 }

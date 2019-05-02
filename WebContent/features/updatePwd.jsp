@@ -17,19 +17,29 @@
 </head>
 <body style="background: url(${pageContext.request.contextPath }/images/bg.png) ;background-size:100%">
 	<script type="text/javascript">
-	$(document).ready(function(){
-		$("#form").submit(function(){
-			var newPwd=$("#newPwd").val()+"";
-			var cfPwd=$("#cfPwd").val()+"";
-			  if(newPwd!=cfPwd){
-				alert("密码输入不一致");
-				return false;
-			}else{
-				alert("修改密码成功");
-				return true;
-			} 
+	function check(){	
+		$.ajax({
+			url:'${pageContext.request.contextPath}/UpdatePwdServlet',
+			method:'Post',			
+			async:true,		//异步
+			data:{
+				"newPwd":$("#newPwd").val(),
+				"cfPwd":$("#cfPwd").val()
+				},
+			success:function(result){
+				if(result=="true"){
+					alert("密码修改成功");	
+					window.location.href="${pageContext.request.contextPath}/login.jsp"; 
+				}else if(result=="false"){
+					alert("密码修改失败");				
+				}else{
+					alert("两次密码输入不一致");
+				}
+							
+			}		
 		});
-	});
+		return false;
+	}
 	</script>
    <h1>更新密码界面</h1>	
    	<hr/>
@@ -65,15 +75,14 @@
 		</div>
 		
 		<div style="text-align:center;">
-		<form  action ="${pageContext.request.contextPath }/UpdatePwdServlet"  method="post" id="form" >
+		<form  action =""  onsubmit="return check()" >
 			<ul>
 		&emsp;&emsp;	<li>新密码：<input type="text" name="newPwd" placeholder="新密码"  id="newPwd" required onkeyup="this.value=this.value.replace(/[^\w]/g,'');">  <!-- 给一个元素名称便于在User中校验 ,--> 
 			&emsp;&emsp;<span style="font-size:15px;color:black;font-weight:bold;">请输入新密码</span></li>
 		&emsp;&emsp;	<li>确认密码：<input type="text" name="cfPwd" placeholder="确认密码"  id="cfPwd" required onkeyup="this.value=this.value.replace(/[^\w]/g,'');">  <!-- confirm -->
 			&emsp;&emsp;<span style="font-size:15px;color:black;font-weight:bold;">再次输入新密码</span></li>
 			</ul>		
-			<!-- li是不能单独使用，必须在于ul之中，能使标签按行排好 -->
-			<input type="submit"  class="btn" value="确认修改" onclick="register()">
+			<input type="submit"  class="btn" value="确认修改">
 			<span id="tip"></span>
 		</form>
 		</div>

@@ -60,7 +60,6 @@ public class GetImageServlet extends HttpServlet {
 			ImageIO.write(img, "jpeg", resp.getOutputStream());
 			str=str.toLowerCase();	//转小写，达到不区分大小写的作用
 			HttpSession session = req.getSession();
-			System.out.println("验证码："+str);
 			session.setAttribute("ocode", str);				//将验证码内容存放到session中以便于后续进行比较
 		}
 		

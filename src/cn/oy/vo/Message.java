@@ -14,9 +14,22 @@ public class Message {
 
 	private String content;
 	
+	private List<Integer> ids;
+	
 	public String getContent() {
 		return content;
 	}
+
+	
+	public List<Integer> getIds() {
+		return ids;
+	}
+
+
+	public void setIds(List<Integer> ids) {
+		this.ids = ids;
+	}
+
 
 	public void setContent(String content) {
 		this.content = content;
@@ -47,7 +60,7 @@ public class Message {
 	public String toJson() {
 		return gson.toJson(this);
 	}
-	private static Gson gson=new Gson();
+	Gson gson=(Gson) ioc.MapIoc.MAP.get("gson");
 }
 
 

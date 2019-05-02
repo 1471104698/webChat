@@ -3,9 +3,9 @@ package cn.oy.serviceImpl;
 import cn.oy.dao.UserDao;
 import cn.oy.daoImpl.ImplD;
 import cn.oy.pojo.User;
-import cn.oy.service.CheckEmpty;
+import cn.oy.service.LoginService;
 
-public class CheckEmptyImpl implements CheckEmpty {
+public class LoginServiceImpl implements LoginService {
 	
 //	UserDao ud=(UserDao) ioc.MapIoc.MAP.get("ud");
 	UserDao ud=new ImplD();
@@ -15,6 +15,14 @@ public class CheckEmptyImpl implements CheckEmpty {
 			return ud.LoginDao(account, pwd);
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean checkCode(String vcode, String ocode) {
+		vcode=vcode.toLowerCase();		//转小写，达到不区分大小写的作用
+		if(ocode.equals(vcode)) 
+		return true;
+		return false;
 	}
 
 }

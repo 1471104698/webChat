@@ -29,23 +29,19 @@ public class RegServlet extends HttpServlet {
 		int age=Integer.parseInt(req.getParameter("age"));
 		String signature=req.getParameter("signature");
 		String tel=req.getParameter("tel");	
-		String iden=req.getParameter("iden");
+		String iden="0";
 		User user=new User(name, sex, signature, tel, age, iden, pwd, account);
+		System.out.println("user="+user);
 		PrintWriter out =resp.getWriter();
 		RegService rs=(RegService) ioc.MapIoc.MAP.get("rs");
 		int result=rs.regService(user);
 		if(result>0) {
-//			out.print("注册成功");
-//			out.flush();
-//			out.close();
-			req.setAttribute("str", "注册成功");
-			req.getRequestDispatcher("login.jsp").forward(req, resp);
+			out.print("true");
 		}else {
-//			out.print("注册失败");
-			req.setAttribute("str", "注册失败，用户已存在");
-			req.getRequestDispatcher("user/reg.jsp").forward(req, resp);
-			
+			out.print("false");
 		}
+		out.flush();
+		out.close();
 		
     }
 

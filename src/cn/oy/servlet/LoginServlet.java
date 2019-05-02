@@ -1,15 +1,16 @@
 package cn.oy.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import cn.oy.pojo.User;
-import cn.oy.service.CheckEmpty;
+import cn.oy.service.FriendService;
+import cn.oy.service.LoginService;
 
 /**
  * Servlet implementation class LoginServlet
@@ -26,19 +27,36 @@ public class LoginServlet extends HttpServlet {
     
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		CheckEmpty ce=(CheckEmpty) ioc.MapIoc.MAP.get("ce");
+		LoginService ls=(LoginService) ioc.MapIoc.MAP.get("ls");
+		FriendService fs=(FriendService) ioc.MapIoc.MAP.get("fs");
+		PrintWriter out =resp.getWriter();
+		String vcode=req.getParameter("vcode");
+		String ocode=(String) req.getSession().getAttribute("ocode");
+		req.setCharacterEncoding("utf-8");
+		resp.setCharacterEncoding("utf-8");
 		
+		if(vcode!=null) {
+		boolean result=ls.checkCode(vcode, ocode);
+		if(result) {			
+			out.print("true");		
+		}else {
+			out.print("false");		
+			}
+		return;
+		}
 		String account=req.getParameter("account");
 		String pwd=req.getParameter("pwd");
-		User u=ce.checkEmpty(account, pwd);
-		HttpSession session=req.getSession();
+		User u=ls.checkEmpty(account, pwd);
 		if(u!=null) {
-			session.setAttribute("user", u);
-			resp.sendRedirect("chat.jsp");
+			out.print("yes");
+			u.setGroups(fs.groupsService(u.getId()));
+			System.out.println("user="+u);
+			req.getSession().setAttribute("user", u);
 		}else {
-			req.setAttribute("str", "用户或密码错误！！！");
-			req.getRequestDispatcher("login.jsp").forward(req, resp);
+			out.print("error");				  
 		}
+		out.flush();
+		out.close();
 	}
 
 }
