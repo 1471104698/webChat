@@ -73,6 +73,7 @@ public class FriendServlet extends HttpServlet {
 			
 		}else {			//修改昵称
 			String nickName=req.getParameter("nickName");
+			
 		}
 		
 		out.flush();
