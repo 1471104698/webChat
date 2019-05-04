@@ -35,13 +35,12 @@
 			success:function(result){
 				if(result=="true"){
 					alert("信息修改成功！！！");	
-					window.location.href="${pageContext.request.contextPath}/chat/chat.jsp"; 
+					window.location.href="${pageContext.request.contextPath}/user/user.jsp"; 
 				}else{
 					alert("信息修改失败！！！");
 				}							
 			}		
 		});
-
 		return false;
 	}
 	</script>
@@ -61,15 +60,15 @@
 
 		
 		<c:if test="${not empty user}">
-		&emsp;&emsp;<a href="${pageContext.request.contextPath }/chat/chat.jsp">返回首页</a><br/><br/>
+		&emsp;&emsp;<a href="${pageContext.request.contextPath }/user/user.jsp">返回首页</a><br/><br/>
 		</c:if>
 		<form action=""  onsubmit="return check()">
 			<ul>
 				<li>姓名：&emsp;&emsp;<input type="text" name="name" id="name" placeholder="姓名" value="${sessionScope.user.name }" maxlength="10" required onkeyup="this.value=this.value.replace(/(^\s+)|(\s+$)/g,'');"></li>
 				<li>年龄：&emsp;&emsp;<input type="text" name="age" id="age"  placeholder="年龄"  value="${sessionScope.user.age }" maxlength="3" required onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></li>
 				<li>手机号码：<input type="text" placeholder="手机号码" id="tel" name="tel"  value="${sessionScope.user.tel }" maxlength="11" required onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></li>
-				<li>性别：&emsp;&emsp;<input type="radio" name="sex"  value="1" checked="checked">男
-					  				  <input type="radio" name="sex"  value="2" >女</li>
+				<li>性别：&emsp;&emsp;<input type="radio" name="sex"  value="男" checked="checked">男
+					  				  <input type="radio" name="sex"  value="女" >女</li>
 				<li>个性签名：<br/><textarea cols="50" rows="10" id="signature" name="signature" >${sessionScope.user.signature }</textarea></li>
 				<li>&emsp;&emsp;&emsp;<input type="submit" value="确认修改"></li>
 			</ul>	

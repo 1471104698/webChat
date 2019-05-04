@@ -32,9 +32,6 @@ public class LoginServlet extends HttpServlet {
 		PrintWriter out =resp.getWriter();
 		String vcode=req.getParameter("vcode");
 		String ocode=(String) req.getSession().getAttribute("ocode");
-		req.setCharacterEncoding("utf-8");
-		resp.setCharacterEncoding("utf-8");
-		
 		if(vcode!=null) {
 		boolean result=ls.checkCode(vcode, ocode);
 		if(result) {			
@@ -46,7 +43,7 @@ public class LoginServlet extends HttpServlet {
 		}
 		String account=req.getParameter("account");
 		String pwd=req.getParameter("pwd");
-		User u=ls.checkEmpty(account, pwd);
+		User u=ls.checkLogin(account, pwd);
 		if(u!=null) {
 			out.print("yes");
 			u.setGroups(fs.groupsService(u.getId()));

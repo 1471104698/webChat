@@ -4,7 +4,7 @@ import cn.oy.pojo.User;
 
 public interface LoginService {
 	
-	User checkEmpty(String account,String pwd);
+	User checkLogin(String account,String pwd);
 	
 	boolean checkCode(String vcode, String ocode) ;
 }

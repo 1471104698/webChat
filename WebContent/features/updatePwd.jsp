@@ -59,7 +59,7 @@
    		<c:if test="${not empty user}">
    			<c:if test="${ empty find1}">
    				<c:if test="${empty flag }">
-		&emsp;&emsp;<a href="${pageContext.request.contextPath }/user/admin.jsp">返回首页</a><br/><br/>
+		&emsp;&emsp;<a href="${pageContext.request.contextPath }/user/user.jsp">返回首页</a><br/><br/>
 
    				</c:if>
    			</c:if>

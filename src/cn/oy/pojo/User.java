@@ -135,6 +135,6 @@ public class User {
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", sex=" + sex + ", signature=" + signature + ", tel=" + tel
 				+ ", age=" + age + ", iden=" + iden + ", pwd=" + pwd + ", account=" + account + ", groups=" + groups
-				+ ", friends=" + friends + "]";
+				+ ", friends=" + friends + ", nickName=" + nickName + "]";
 	}
 }

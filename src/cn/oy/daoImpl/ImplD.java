@@ -26,7 +26,7 @@ public class ImplD implements UserDao {
 		try {
 			con=du.getCon();
 			//创建Sql命令
-			String sql="select *from user where account =? and pwd=MD5(?)";	// 
+			String sql="select *from users where account =? and pwd=MD5(?)";	// 
 			//创建Sql命令对象
 			psta=(PreparedStatement) con.prepareStatement(sql);
 			//给占位符赋值
@@ -71,7 +71,7 @@ public class ImplD implements UserDao {
 		try {
 			con=du.getCon();
 			//创建Sql命令
-			String sql="select *from user where account =?";	// 
+			String sql="select *from users where account =?";	// 
 			//创建Sql命令对象
 			psta=(PreparedStatement) con.prepareStatement(sql);
 			//给占位符赋值
@@ -110,7 +110,7 @@ public class ImplD implements UserDao {
 			try {
 				con=du.getCon();
 				//创建Sql命令
-				String sql="select *from user where uid =?";	// 
+				String sql="select *from users where uid =?";	// 
 				//创建Sql命令对象
 				psta=(PreparedStatement) con.prepareStatement(sql);
 				//给占位符赋值
@@ -118,6 +118,7 @@ public class ImplD implements UserDao {
 				rs=psta.executeQuery();
 				if(rs.next()) {   //只有一个，因此不需要用while，用if 	
 					u=new User();
+					u.setAccount(rs.getString("account"));
 					u.setId(rs.getInt("uid"));
 					u.setName(rs.getString("true_name"));
 					u.setAge(rs.getInt("age"));
@@ -152,7 +153,8 @@ public class ImplD implements UserDao {
 		try {
 			con=du.getCon();
 			//创建Sql命令
-			String sql="insert into user (account,pwd,tel,sex,age,signature,iden,true_name) values(?,MD5(?),?,?,?,?,?,?)";	//注册用户
+			String sql="insert into users (account,pwd,tel,sex,age,signature,iden,true_name) "
+					+ "values(?,MD5(?),?,?,?,?,?,?)";	//注册用户
 			//创建Sql命令对象
 			psta=con.prepareStatement(sql);
 			//给占位符赋值
@@ -188,7 +190,7 @@ public class ImplD implements UserDao {
 		int result=-1;
 		try {
 			con=du.getCon();
-			String sql="select * from user where account=? and true_name=? and tel=?";
+			String sql="select * from users where account=? and true_name=? and tel=?";
 			psta=con.prepareStatement(sql);
 			
 			psta.setString(1, account);
@@ -223,7 +225,7 @@ public class ImplD implements UserDao {
 		try {
 			
 			con=du.getCon();
-			String sql="update user set pwd=MD5(?) where account=?";
+			String sql="update users set pwd=MD5(?) where account=?";
 			psta=con.prepareStatement(sql);
 			psta.setString(1, newPwd);
 			psta.setString(2, account);
@@ -306,17 +308,20 @@ public class ImplD implements UserDao {
 
 	//查询用户信息
 	@Override
-	public User SeeFriendDao(Integer fid) {
+	public User SeeFriendDao(Integer fid,Integer uid) {
 		try {
 			con=du.getCon();
-			String sql="select * from user where uid=?";
+			String sql="SELECT * FROM users u, friends f WHERE u.uid=? AND f.f_fid=u.uid"
+					+ " AND f.f_uid=?";
 			psta=con.prepareStatement(sql);
 			
 			psta.setInt(1, fid);
-	
+			psta.setInt(2, fid);
+			psta.setInt(2, uid);
 			rs=psta.executeQuery();
 			if(rs.next()) {
 				u=new User();
+				u.setNickName(rs.getString("f_name"));
 				u.setAccount(rs.getString("account"));
 				u.setId(rs.getInt("uid"));
 				u.setName(rs.getString("true_name"));
@@ -326,6 +331,7 @@ public class ImplD implements UserDao {
 				u.setTel(rs.getString("tel"));
 				u.setIden(rs.getString("iden"));
 			}
+			System.out.println("此处="+u);
 			}catch (SQLException e) {	
 				e.printStackTrace();
 			}catch(Exception e2) {
@@ -385,7 +391,7 @@ public class ImplD implements UserDao {
 		try {
 			
 			con=du.getCon();
-			String sql="update user set sex=?,tel=?,true_name=?,age=?,signature=? where account=?";
+			String sql="update users set sex=?,tel=?,true_name=?,age=?,signature=? where account=?";
 			psta=con.prepareStatement(sql);
 			psta.setString(1, user.getSex());
 			psta.setString(2, user.getTel());
@@ -419,16 +425,23 @@ public class ImplD implements UserDao {
 		try {
 			con=du.getCon();
 			//创建Sql命令
-			String sql="  select * from user where uid in "
-					+ " (select f_fid from friends where f_uid=? and f_groupname=?)";	// 
-			//创建Sql命令对象
+			/*
+			 * String sql="  select * from user ,friends where uid in " +
+			 * " (select f_fid from friends where f_uid=? and f_groupname=?)"; //
+			 */			//创建Sql命令对象
+			String sql="SELECT * FROM users u ,friends WHERE u.uid IN"
+					+ " (SELECT f_fid FROM friends WHERE f_uid=? AND f_groupname=? ) AND"
+					+ " f_fid=u.uid and f_uid=?";
+					
 			psta=(PreparedStatement) con.prepareStatement(sql);
 			//给占位符赋值
 			psta.setInt(1, uid);
 			psta.setString(2, group);
+			psta.setInt(3, uid);
 			rs=psta.executeQuery();
 			while(rs.next()) {  
 				u=new User();
+				u.setNickName(rs.getString("f_name"));
 				u.setId(rs.getInt("uid"));
 				u.setName(rs.getString("true_name"));
 				u.setAge(rs.getInt("age"));
@@ -477,7 +490,6 @@ public class ImplD implements UserDao {
 				group.setId(rs.getInt("ug_uid"));
 				group.setName(rs.getString("ug_name"));
 				groups.add(group);
-				System.out.println("用户分组为"+group);
 			}
 			
 		} catch (SQLException e) {	
@@ -495,6 +507,155 @@ public class ImplD implements UserDao {
 			}
 		}
 		return groups;
+	}
+
+//	//得到昵称
+//	@Override
+//	public String getNickNameDao(Integer fid, Integer uid) {
+//		String nickName=null;
+//		try {		
+//			con=du.getCon();
+//			String sql="select f_name from friends where f_fid=? and f_uid=?";
+//			psta=con.prepareStatement(sql);
+//			psta.setInt(1, fid);
+//			psta.setInt(2, uid);
+//			rs=psta.executeQuery();
+//			if(rs.next()) {
+//				nickName=rs.getString("f_name");
+//			}
+//		} catch (SQLException e) {	
+//			e.printStackTrace();
+//		}catch(Exception e2) {
+//			e2.printStackTrace();
+//		}finally {
+//			try {	//关闭资源
+//			
+//				du.close(psta, con);
+//			} catch (SQLException e2) {
+//				e2.printStackTrace();
+//			}catch(Exception e3) {
+//				e3.printStackTrace();
+//			}
+//		}
+//		return nickName;
+//	}
+	//修改昵称
+	@Override
+	public int moNickName(Integer fid, Integer uid, String nickName) {
+		int result=-1;
+		try {		
+			con=du.getCon();
+			String sql="update friends set f_name=? where f_fid=? and f_uid=?";
+			psta=con.prepareStatement(sql);
+			psta.setString(1, nickName);
+			psta.setInt(2, fid);
+			psta.setInt(3, uid);
+			result=psta.executeUpdate();
+		} catch (SQLException e) {	
+			e.printStackTrace();
+		}catch(Exception e2) {
+			e2.printStackTrace();
+		}finally {
+			try {	//关闭资源
+			
+				du.close(psta, con);
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}catch(Exception e3) {
+				e3.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
+	
+	//修改好友分组昵称
+	@Override
+	public int moGroupNameDao(String newName, Integer uid, String oldName) {
+		int result=-1;
+		try {		
+			con=du.getCon();
+			String sql="UPDATE user_group ug,friends f SET ug.ug_name=? ,f.f_groupname=?" + 
+					"WHERE ug_uid=? AND ug_name=? AND f_uid=? AND f_groupname=?";
+			psta=con.prepareStatement(sql);
+			psta.setString(1, newName);
+			psta.setString(2, newName);
+			psta.setInt(3, uid);
+			psta.setString(4, oldName);
+			psta.setInt(5, uid);
+			psta.setString(6, oldName);
+			result=psta.executeUpdate();
+		} catch (SQLException e) {	
+			e.printStackTrace();
+		}catch(Exception e2) {
+			e2.printStackTrace();
+		}finally {
+			try {	//关闭资源
+			
+				du.close(psta, con);
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}catch(Exception e3) {
+				e3.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	//创建好友分组
+	@Override
+	public int createGroupNameDao(String newName, Integer uid) {
+		int result=-1;
+		try {		
+			con=du.getCon();
+			String sql="insert into  user_group (ug_name,ug_uid) values (?,?)";
+			psta=con.prepareStatement(sql);
+			psta.setString(1, newName);
+			psta.setInt(2, uid);
+			result=psta.executeUpdate();
+		} catch (SQLException e) {	
+			e.printStackTrace();
+		}catch(Exception e2) {
+			e2.printStackTrace();
+		}finally {
+			try {	//关闭资源
+				du.close(psta, con);
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}catch(Exception e3) {
+				e3.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	//修改好友所在分组
+	@Override
+	public int moveFriendDao(Integer fid, Integer uid, String group) {
+		int result=-1;
+		try {		
+			con=du.getCon();
+			String sql="update friends set f_groupname=? where f_fid=? and f_uid=?";
+			psta=con.prepareStatement(sql);
+			psta.setString(1, group);
+			psta.setInt(2, fid);
+			psta.setInt(3, uid);
+			result=psta.executeUpdate();
+		} catch (SQLException e) {	
+			e.printStackTrace();
+		}catch(Exception e2) {
+			e2.printStackTrace();
+		}finally {
+			try {	//关闭资源
+			
+				du.close(psta, con);
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}catch(Exception e3) {
+				e3.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 	

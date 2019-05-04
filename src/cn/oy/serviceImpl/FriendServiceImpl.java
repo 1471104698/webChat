@@ -39,9 +39,9 @@ public class FriendServiceImpl implements FriendService {
 
 	//查看好友
 	@Override
-	public User SeeFriendService(Integer fid) {
+	public User SeeFriendService(Integer fid,Integer uid) {
 		if(ud.isEmpty(fid)!=null) 		//查看的用户为空
-			return ud.SeeFriendDao(fid);
+			return ud.SeeFriendDao(fid,uid);
 		
 		return null;
 	}
@@ -58,6 +58,51 @@ public class FriendServiceImpl implements FriendService {
 	@Override
 	public List<Group> groupsService(Integer uid) {
 		return ud.groupsDao(uid);
+	}
+
+//	//得到昵称
+//	@Override
+//	public String getNickName(Integer fid, Integer uid) {
+//		
+//		return ud.getNickNameDao(fid, uid);
+//	}
+	//修改昵称
+	@Override
+	public int moNickName(Integer fid, Integer uid, String nickName) {
+		if(ud.isEmpty(fid)!=null) {
+			return ud.moNickName(fid, uid, nickName);
+		}
+			
+		return 0;
+	}
+
+	//修改好友分组名称
+	@Override
+	public int moGroupName(String newName, Integer uid, String oldName) {
+		if(ud.isEmpty(uid)!=null) {
+			return ud.moGroupNameDao(newName, uid, oldName);
+		}
+		else
+		return -1;
+	}
+
+	//创建好友分组
+	@Override
+	public int createGroupName(String newName, Integer uid) {
+		if(ud.isEmpty(uid)!=null) {
+			return ud.createGroupNameDao(newName, uid);
+		}
+		return -1;
+	}
+
+	@Override
+	//修改好友所在分组
+	public int moveFriend(Integer fid,Integer uid,String group) {
+		if(ud.CheckFriendDao(fid, uid)<0)
+			return -1;
+		if(ud.isEmpty(fid)!=null&&ud.isEmpty(uid)!=null)
+			return ud.moveFriendDao(fid, uid, group);
+		return -1;
 	}
 
 

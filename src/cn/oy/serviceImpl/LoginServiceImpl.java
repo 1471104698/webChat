@@ -10,7 +10,7 @@ public class LoginServiceImpl implements LoginService {
 //	UserDao ud=(UserDao) ioc.MapIoc.MAP.get("ud");
 	UserDao ud=new ImplD();
 	@Override
-	public User checkEmpty(String account, String pwd) {
+	public User checkLogin(String account, String pwd) {
 		if(ud.LoginDao(account,pwd)!=null) {
 			return ud.LoginDao(account, pwd);
 		}

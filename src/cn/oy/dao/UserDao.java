@@ -24,7 +24,7 @@ public interface UserDao {
 	//删除好友
 	int DelFriendDao(Integer fid, Integer uid);
 	//查看好友信息
-	User SeeFriendDao(Integer fid);
+	User SeeFriendDao(Integer fid,Integer uid);
 	//查询是否已经是好友
 	int CheckFriendDao(Integer fid, Integer uid);
 	//修改个人信息
@@ -33,6 +33,15 @@ public interface UserDao {
 	List<User> friendsDao(Integer uid,String group);
 	//得到用户的所有分组
 	List<Group> groupsDao(Integer uid);
+	//修改昵称
+	int moNickName(Integer fid, Integer uid, String nickName);
+	//修改好友分组昵称
+	int moGroupNameDao(String newName,Integer uid,String oldName);
+	//创建好友分组
+	int createGroupNameDao(String newName,Integer uid);
+	//修改好友所在分组
+	int moveFriendDao(Integer fid,Integer uid,String group);
+	
 	
 //	// 查询用户总数
 //	int getTotalDao(String uid);

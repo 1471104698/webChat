@@ -51,7 +51,6 @@
               writeToScreen('<span style="color:red;">系统出错啦</span>' + msg.data);
               ws.close();
           }; 
-
 	}
 	
 	 
