@@ -477,7 +477,7 @@ public class ImplD implements UserDao {
 		try {
 			con=du.getCon();
 			//创建Sql命令
-			String sql="  select * from user_group where ug_uid =? ";
+			String sql="  select * from user_list where ul_uid =? ";
 						
 			//创建Sql命令对象
 			psta=(PreparedStatement) con.prepareStatement(sql);
@@ -486,9 +486,9 @@ public class ImplD implements UserDao {
 			rs=psta.executeQuery();
 			while(rs.next()) {  
 				group=new Group();
-				group.setId(rs.getInt("ug_id"));
-				group.setId(rs.getInt("ug_uid"));
-				group.setName(rs.getString("ug_name"));
+				group.setId(rs.getInt("ul_id"));
+				group.setId(rs.getInt("ul_uid"));
+				group.setName(rs.getString("ul_name"));
 				groups.add(group);
 			}
 			
@@ -509,36 +509,6 @@ public class ImplD implements UserDao {
 		return groups;
 	}
 
-//	//得到昵称
-//	@Override
-//	public String getNickNameDao(Integer fid, Integer uid) {
-//		String nickName=null;
-//		try {		
-//			con=du.getCon();
-//			String sql="select f_name from friends where f_fid=? and f_uid=?";
-//			psta=con.prepareStatement(sql);
-//			psta.setInt(1, fid);
-//			psta.setInt(2, uid);
-//			rs=psta.executeQuery();
-//			if(rs.next()) {
-//				nickName=rs.getString("f_name");
-//			}
-//		} catch (SQLException e) {	
-//			e.printStackTrace();
-//		}catch(Exception e2) {
-//			e2.printStackTrace();
-//		}finally {
-//			try {	//关闭资源
-//			
-//				du.close(psta, con);
-//			} catch (SQLException e2) {
-//				e2.printStackTrace();
-//			}catch(Exception e3) {
-//				e3.printStackTrace();
-//			}
-//		}
-//		return nickName;
-//	}
 	//修改昵称
 	@Override
 	public int moNickName(Integer fid, Integer uid, String nickName) {
@@ -575,8 +545,8 @@ public class ImplD implements UserDao {
 		int result=-1;
 		try {		
 			con=du.getCon();
-			String sql="UPDATE user_group ug,friends f SET ug.ug_name=? ,f.f_groupname=?" + 
-					"WHERE ug_uid=? AND ug_name=? AND f_uid=? AND f_groupname=?";
+			String sql="UPDATE user_list ul,friends f SET ul.ul_name=? ,f.f_groupname=?" + 
+					"WHERE ul_uid=? AND ul_name=? AND f_uid=? AND f_groupname=?";
 			psta=con.prepareStatement(sql);
 			psta.setString(1, newName);
 			psta.setString(2, newName);
@@ -608,7 +578,7 @@ public class ImplD implements UserDao {
 		int result=-1;
 		try {		
 			con=du.getCon();
-			String sql="insert into  user_group (ug_name,ug_uid) values (?,?)";
+			String sql="insert into  user_list (ul_name,ul_uid) values (?,?)";
 			psta=con.prepareStatement(sql);
 			psta.setString(1, newName);
 			psta.setInt(2, uid);

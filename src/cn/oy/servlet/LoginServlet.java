@@ -27,8 +27,11 @@ public class LoginServlet extends HttpServlet {
     
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		LoginService ls=(LoginService) ioc.MapIoc.MAP.get("ls");
-		FriendService fs=(FriendService) ioc.MapIoc.MAP.get("fs");
+		resp.setContentType("text/html;charset=utf-8");
+		resp.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8");
+		LoginService ls=(LoginService) util.MapIoc.MAP.get("ls");
+		FriendService fs=(FriendService) util.MapIoc.MAP.get("fs");
 		PrintWriter out =resp.getWriter();
 		String vcode=req.getParameter("vcode");
 		String ocode=(String) req.getSession().getAttribute("ocode");

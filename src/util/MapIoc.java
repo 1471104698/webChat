@@ -1,12 +1,16 @@
-package ioc;
+package util;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
 
+import cn.oy.dao.ChatDao;
 import cn.oy.dao.UserDao;
+import cn.oy.dao.WayDao;
+import cn.oy.daoImpl.ChatDaoImpl;
 import cn.oy.daoImpl.ImplD;
+import cn.oy.daoImpl.WayDaoImpl;
 import cn.oy.service.LoginService;
 import cn.oy.service.FindPwdService;
 import cn.oy.service.FriendService;
@@ -27,6 +31,7 @@ public class MapIoc {
 	public final static Map<String,Object> MAP=new HashMap<String, Object>();
 	
 	static {
+
 		LoginService ls=new LoginServiceImpl();
 		MAP.put("ls", ls);
 		UserDao ud=new ImplD();
@@ -45,5 +50,11 @@ public class MapIoc {
 		MAP.put("ps", ps);
 		UpdateInfoService uis=new UpdateInfoServiceImpl();
 		MAP.put("uis", uis);
+		WayDao wy=new WayDaoImpl();
+		MAP.put("wy", wy);
+		ChatDao cd=new ChatDaoImpl();
+		MAP.put("cd", cd);
+		
+		
 	}
 }

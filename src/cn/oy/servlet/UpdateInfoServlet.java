@@ -26,6 +26,9 @@ public class UpdateInfoServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setContentType("text/html;charset=utf-8");
+		resp.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8");
 		PrintWriter out =resp.getWriter();
 		String account=((User)req.getSession().getAttribute("user")).getAccount();
 		String name=req.getParameter("name");
@@ -33,11 +36,8 @@ public class UpdateInfoServlet extends HttpServlet {
 		String sex=req.getParameter("sex");
 		String tel=req.getParameter("tel");
 		String signature=req.getParameter("signature");
-		System.out.println("account="+account);
-		System.out.println("sex="+sex);
-		System.out.println("signature="+signature);
 		User user=new User(name, sex, signature, tel, age, null, account);
-		UpdateInfoService uis=(UpdateInfoService) ioc.MapIoc.MAP.get("uis");
+		UpdateInfoService uis=(UpdateInfoService) util.MapIoc.MAP.get("uis");
 		int result=uis.updateInfoService(user);
 		if(result>0) {
 			out.print("true");

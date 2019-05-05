@@ -1,17 +1,11 @@
 package cn.oy.service;
 
-import java.util.List;
-
-import cn.oy.pojo.User;
+import cn.oy.pojo.Page;
 
 public interface PageService {
-
+	
 	/**
-	 * 查询用户总数
+	 * 查询某一页聊天记录
 	 */
-	int getTotaService(String uid);	
-	/**
-	 * 查询某一页
-	 */
-	List<User> queryUserService(int currentPage,int pageSize,String uid);	
+	Page queryDateService(String current,Integer uid,Integer fid);	
 }

@@ -11,7 +11,7 @@ public class DemoConfig implements ServerApplicationConfig {
 	//注解方式的启动，一般用这个
 	@Override
 	public Set<Class<?>> getAnnotatedEndpointClasses(Set<Class<?>> scan) {
-		System.out.println("hehe"+scan.size());
+		System.out.println("hehe。。。。。。。。。"+scan.size());
 		//返回,提供了过滤的作用
 		return scan;
 	}

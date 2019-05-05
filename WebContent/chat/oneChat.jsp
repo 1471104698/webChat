@@ -9,11 +9,14 @@
 <script type="text/javascript">
 	var username='${sessionScope.user.name}';
 	var uid='${sessionScope.user.id}';
-	  var who='${sessionScope.uid}'; 
+	var account='${sessionScope.user.account}';
+	var currentPage='${sessionScope.page.currentPage}';
+	var totalPage='${sessionScope.page.totalPage}';
+	  var who='${sessionScope.fid}'; 
 	  //alert(who); 
 	//加双引号（单引号）是因为${sessionScope.username}是字符串，不加会当成是变量
 	var ws;		//一个ws对象就是一个通信管道
-	var target="ws://localhost:8888/1webchat/ochat?uid="+uid+"&username="+username;	//url
+	var target="ws://localhost:8888/1webchat/ochat?account="+account;	//url
 	window.onload=function(){
 		//进入聊天页面，就打开socket通道
 				
@@ -35,7 +38,7 @@
 			  if(undefined!=msg.ids&&undefined!=msg.usernames){		//未定义的值和定义未赋值的为undefined，null是一种特殊的object,NaN是一种特殊的number
 				  $("#userList").html("");		//将内容清空,如不执行一个用户退出再进来会显示两次名字
  					$(msg.ids).each(function(i,v){		//遍历到第i个，v为第i个的值
- 					 $("#userList").append("<input type=hidden   value='"+msg.usernames[i]+"'/>"+msg.usernames[i]+" "+		
+ 					 $("#userList").append("<input type=hidden   value='"+msg.usernames[i]+"'/>"+msg.usernames[i]+"("+msg.accounts[i]+")"+		
 					 "<input type=button  onclick='Add("+v+")' value='添加好友'>"+
 					 "<input type=button  onclick='See("+v+")' value='查看信息'>"	+	 
 							  "<br/>")		//this，遍历到的当前对象
@@ -62,7 +65,7 @@
 			method:'post',
 			url:'${pageContext.request.contextPath}/FriendServlet',
 			async:true,		//异步
-			data:{"fid":u,"uid":uid,"ch":"1","group":"def"},
+			data:{"fid":u,"uid":uid,"ch":"1","group":"我的好友"},
 				
 			success:function(result){
 				if(result=="true"){
@@ -93,7 +96,6 @@
 					alert("用户不存在");
 			}			
 		});
-		
 	}
 	
 	 function subSend(){
@@ -114,6 +116,33 @@
    		$("#msg").val("");  
    	}	
 
+	 function SeeData(data){
+		 if('start'==data)
+			 currentPage=1;
+		 if('-1'==data&&currentPage>1)
+			 currentPage--;
+		 if('+1'==data&&currentPage<totalPage)
+			 currentPage++;
+		 if('finally'==data)
+			 currentPage=totalPage;
+		 $.ajax({
+				method:'post',
+				url:'${pageContext.request.contextPath}/PageServlet',
+				async:true,		//异步
+				data:{"fid":who,"uid":uid,"currentPage":currentPage},
+				success:function(data){
+					//alert(data);
+					var majorList=eval("("+data+")");
+					 if(undefined!=majorList)
+					 {
+						 $("#recordArea").html("");
+						 $.each(majorList, function (i, v){
+							 $("#recordArea").append(v+"<br/>");
+						 });
+					 }
+				}
+			});
+	 }
 </script>
 </head>
 <body>
@@ -132,6 +161,16 @@
 	</div>
 	<div id="userList" style="border:1px solid black; width:200px;height:600px; overflow: scroll;
 	float:left"></div>
+	<div id="recordArea" style="border:1px solid black; width:450px;height:600px; overflow: scroll;
+	float:left">
+	</div>
+	
+	<button onclick="SeeData()">点击查看消息记录</button><br/>
+	<span><button onclick="SeeData('start')">首页</button></span>
+	<span><button onclick="SeeData('-1')">上一页</button></span>
+	<span><button onclick="SeeData('+1')">下一页</button></span>
+	<span><button onclick="SeeData('finally')">尾页</button></span>   
+	
 </body>
 </html>
 

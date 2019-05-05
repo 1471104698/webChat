@@ -28,13 +28,13 @@ public class ChatSocket {
 	private static Map<String,Integer> mui=new HashMap<>();
 	private static List<String>	names=new ArrayList<>();			//将用户名存储起来
 	private static List<Integer> ids=new ArrayList<>();			//将用户名存储起来
-	Gson gson=(Gson) ioc.MapIoc.MAP.get("gson");
+	Gson gson=(Gson) util.MapIoc.MAP.get("gson");
 	
 	
 	@OnOpen
 	public void open(Session session) {
 		//当前webSocket的session对象，不是servlet的session,不能从中取到用户信息
-		System.out.println("config..");
+		System.out.println("此处是ChatSocket，，config..");
 		String queryString = session.getQueryString();		//得到的是username=oy
 		System.out.println(queryString);
 		

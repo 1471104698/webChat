@@ -27,8 +27,11 @@ public class FindPwdServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	resp.setContentType("text/html;charset=utf-8");
+		resp.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8");
     	PrintWriter out =resp.getWriter();
-    	FindPwdService fps=(FindPwdService) ioc.MapIoc.MAP.get("fps");
+    	FindPwdService fps=(FindPwdService) util.MapIoc.MAP.get("fps");
     	String account=req.getParameter("account");
 		String name=req.getParameter("name");
 		String tel=req.getParameter("tel");		

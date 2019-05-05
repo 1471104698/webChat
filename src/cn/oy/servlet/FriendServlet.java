@@ -10,9 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import cn.oy.service.FriendService;
-import cn.oy.service.LoginService;
 import net.sf.json.JSONArray;
-import cn.oy.dao.UserDao;
+import cn.oy.dao.WayDao;
 import cn.oy.pojo.User;
 /**
  * Servlet implementation class FriendServlet
@@ -29,13 +28,14 @@ public class FriendServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		FriendService fs=(FriendService) ioc.MapIoc.MAP.get("fs");
+		resp.setContentType("text/html;charset=utf-8");
+		resp.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8");
+		FriendService fs=(FriendService) util.MapIoc.MAP.get("fs");
 		int result=0;
 		PrintWriter out =resp.getWriter();
 		int fid;
 		int uid;
-		resp.setContentType("text/html;charset=utf-8");
-		resp.setCharacterEncoding("UTF-8");
 		/**
 		 * 对好友列表的操作
 		 */
@@ -47,6 +47,7 @@ public class FriendServlet extends HttpServlet {
 				if(gh==1) {											//修改好友分组名称
 				String oldgname=req.getParameter("oldgname");
 				result=fs.moGroupName(gname, uid, oldgname);
+				System.out.println("result="+result);
 			}else{														//创建分组
 				result=fs.createGroupName(gname, uid);		
 			}
@@ -86,7 +87,7 @@ public class FriendServlet extends HttpServlet {
 			}
 		if(result>0) {
 			if(ch==1)
-				fs.AddFriendService(uid, fid, "def");		
+				fs.AddFriendService(uid, fid, "我的好友");		
 			if(ch==2)
 				fs.DelFriendService(uid, fid);				
 			out.print("true");
@@ -103,8 +104,8 @@ public class FriendServlet extends HttpServlet {
 		}else if(ch==3){											//查看信息
 			User user=null;
 			if(fid==uid) {
-				UserDao ud=(UserDao) ioc.MapIoc.MAP.get("ud");
-				user=ud.isEmpty(uid);
+				WayDao wy=(WayDao) util.MapIoc.MAP.get("wy");
+				user=wy.getUserByID(uid);
 			}
 			else
 			user=fs.SeeFriendService(fid,uid);

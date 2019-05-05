@@ -23,9 +23,12 @@ public class RegServlet extends HttpServlet {
        
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		FriendService fs=(FriendService) ioc.MapIoc.MAP.get("fs");
-		RegService rs=(RegService) ioc.MapIoc.MAP.get("rs");
-		LoginService ls=(LoginService) ioc.MapIoc.MAP.get("ls");
+    	resp.setContentType("text/html;charset=utf-8");
+		resp.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8");
+		FriendService fs=(FriendService) util.MapIoc.MAP.get("fs");
+		RegService rs=(RegService) util.MapIoc.MAP.get("rs");
+		LoginService ls=(LoginService) util.MapIoc.MAP.get("ls");
 		String account=req.getParameter("account");
 		String name=req.getParameter("name");
 		String pwd=req.getParameter("pwd");
@@ -39,7 +42,7 @@ public class RegServlet extends HttpServlet {
 		int result=rs.regService(user);
 		if(result>0) {
 			user=ls.checkLogin(account, pwd);
-			fs.createGroupName("def", user.getId());			//创建一个默认好友分组列表
+			fs.createGroupName("我的好友", user.getId());			//创建一个默认好友分组列表
 			out.print("true");
 		}else {
 			out.print("false");

@@ -27,12 +27,14 @@ public class UpdatePwdServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setContentType("text/html;charset=utf-8");
+		resp.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8");
 		String newPwd=req.getParameter("newPwd");
 		String cfPwd=req.getParameter("cfPwd");
 		String account=(String) req.getSession().getAttribute("account");
 		PrintWriter out =resp.getWriter();
-		UpdatePwdService ups=(UpdatePwdService) ioc.MapIoc.MAP.get("ups");
-		
+		UpdatePwdService ups=(UpdatePwdService) util.MapIoc.MAP.get("ups");
 		int result=ups.updatePwd(newPwd,cfPwd,account);
 		if(result>0) {
 			out.print("true");	

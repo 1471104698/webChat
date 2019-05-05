@@ -37,8 +37,8 @@
 				}
 			});
 		}		
-		function Chat(v){		
-				window.location.href="${pageContext.request.contextPath}/ChatServlet?uid="+v; 												
+		function Chat(fid){		
+				window.location.href="${pageContext.request.contextPath}/ChatServlet?fid="+fid; 												
 			}
 		function Del(u){
 			var flag=window.confirm("是否删除好友？？？");
@@ -80,14 +80,13 @@
 	function MoGroup(oldGroupName){	
 		var flag=window.confirm("是否修改分组？？？");
 		if(flag){
-		$("#"+oldGroupName).html("");
 		var newGroupName=$("#"+oldGroupName).val();
 		if(newGroupName==""||newGroupName==undefined)
 		{
 		alert("分组名不能为空");
 		return;
 		}
-		if(oldGroupName=="def"){
+		if(oldGroupName=="我的好友"){
 			alert("默认分组名不能进行修改");
 			return;
 		}
@@ -135,6 +134,12 @@
 					
 	}
 		
+	function Out(){
+		var flag=window.confirm("你真的要退出么？？？");
+		if(flag){
+			window.location.href="${pageContext.request.contextPath }/UserOutServlet"; 
+		}
+	}
 		
 </script>
 </head>
@@ -145,6 +150,7 @@
 	<h3>用户名：${sessionScope.user.name}</h3>
 	<a href="${pageContext.request.contextPath}/features/updateInfo.jsp">修改个人信息</a><br/>
 	<a href="${pageContext.request.contextPath}/features/updatePwd.jsp">修改密码</a><br/><br/><br/>
+	   <div style="float:right;"> <span onclick="Out()">退出账号</span></div>
 	<input id="create"><button onclick="Create()">创建分组</button>
 	<h2>好友列表：</h2>
 	<c:forEach items="${user.groups }" var="group">
@@ -154,6 +160,6 @@
 		<div  style="width: 400px; height: 150px; overflow: scroll; border: 1px solid;" 
         id='friend${group.name }'></div>
 	</c:forEach>
-      
+  
 </body>
 </html>

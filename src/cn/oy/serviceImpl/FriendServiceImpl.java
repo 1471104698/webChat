@@ -60,12 +60,6 @@ public class FriendServiceImpl implements FriendService {
 		return ud.groupsDao(uid);
 	}
 
-//	//得到昵称
-//	@Override
-//	public String getNickName(Integer fid, Integer uid) {
-//		
-//		return ud.getNickNameDao(fid, uid);
-//	}
 	//修改昵称
 	@Override
 	public int moNickName(Integer fid, Integer uid, String nickName) {
