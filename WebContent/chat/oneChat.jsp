@@ -30,6 +30,7 @@
             }
         
           ws.onmessage=function(event){
+       //		alert(event.data);
         	  eval("var msg="+event.data+";");	//eval可以将一个字符串转成本地代码来执行
         	  	     	  
         	  if(undefined!=msg.welcome){
@@ -38,7 +39,7 @@
 			  if(undefined!=msg.ids&&undefined!=msg.usernames){		//未定义的值和定义未赋值的为undefined，null是一种特殊的object,NaN是一种特殊的number
 				  $("#userList").html("");		//将内容清空,如不执行一个用户退出再进来会显示两次名字
  					$(msg.ids).each(function(i,v){		//遍历到第i个，v为第i个的值
- 					 $("#userList").append("<input type=hidden   value='"+msg.usernames[i]+"'/>"+msg.usernames[i]+"("+msg.accounts[i]+")"+		
+ 					 $("#userList").append("<input type=hidden   value='"+msg.ids[i]+"'/>"+msg.usernames[i]+"("+msg.accounts[i]+")"+		
 					 "<input type=button  onclick='Add("+v+")' value='添加好友'>"+
 					 "<input type=button  onclick='See("+v+")' value='查看信息'>"	+	 
 							  "<br/>")		//this，遍历到的当前对象

@@ -16,6 +16,7 @@ public class User {
 	private List<Group> groups;
 	private List<User> friends;
 	private String nickName;
+	private List<GroupChat> groupChats;
 	public User() {
 	}
 	
@@ -47,6 +48,16 @@ public class User {
 	
 
 
+
+
+
+	public List<GroupChat> getGroupChats() {
+		return groupChats;
+	}
+
+	public void setGroupChats(List<GroupChat> groupChats) {
+		this.groupChats = groupChats;
+	}
 
 	public String getNickName() {
 		return nickName;
@@ -135,6 +146,6 @@ public class User {
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", sex=" + sex + ", signature=" + signature + ", tel=" + tel
 				+ ", age=" + age + ", iden=" + iden + ", pwd=" + pwd + ", account=" + account + ", groups=" + groups
-				+ ", friends=" + friends + ", nickName=" + nickName + "]";
+				+ ", friends=" + friends + ", nickName=" + nickName + ", grogpChats=" + groupChats + "]";
 	}
 }

@@ -101,8 +101,10 @@
 					alert("修改成功");
 				window.location.href="${pageContext.request.contextPath}/user/user.jsp"
 				}
-				else
+				else if(result=="false")
 					alert("修改失败");
+				else
+					alert("分组名已存在");
 			}			
 		});
 		}
@@ -127,8 +129,10 @@
 					alert("创建分组成功");
 				window.location.href="${pageContext.request.contextPath}/user/user.jsp"
 				}
-				else
+				else if(result=="false")
 					alert("创建分组失败");
+				else
+					alert("分组名已存在");
 			}			
 		});
 					
@@ -140,6 +144,21 @@
 			window.location.href="${pageContext.request.contextPath }/UserOutServlet"; 
 		}
 	}
+	
+	function Join(data){
+		if(null!=data)
+		window.location.href="${pageContext.request.contextPath }/chat/chat.jsp"; 
+	}
+	
+	function Search(){
+		var value=$("#find").val();
+		if(typeof value==number){
+			&.ajax({
+				
+			});
+		}
+			
+	}
 		
 </script>
 </head>
@@ -150,16 +169,26 @@
 	<h3>用户名：${sessionScope.user.name}</h3>
 	<a href="${pageContext.request.contextPath}/features/updateInfo.jsp">修改个人信息</a><br/>
 	<a href="${pageContext.request.contextPath}/features/updatePwd.jsp">修改密码</a><br/><br/><br/>
-	   <div style="float:right;"> <span onclick="Out()">退出账号</span></div>
+	   <div style="float:left;"> <span onclick="Out()">退出账号</span></div><br/><br/>
+	   <br/>	
+	<h2>我加入的群聊：</h2>
+	<c:forEach items="${user.groupChats }" var="groupChat">
+	${groupChat.name }<button onclick="Join('${groupChat }')">进入群聊</button>
+	</c:forEach>
+	<h3>找群：</h3>
+	<input id="find">
+	<button onclick="Search()">点击查找</button>
+	<div>
 	<input id="create"><button onclick="Create()">创建分组</button>
 	<h2>好友列表：</h2>
 	<c:forEach items="${user.groups }" var="group">
-		
 		<br/><input type="button" onclick="Get('${group.name }')" id="" value="${group.name }"><font color=red>(点击查看该分组下的好友)</font>
 		<input id="${group.name }"><button onclick="MoGroup('${group.name }')">修改分组名</button>
 		<div  style="width: 400px; height: 150px; overflow: scroll; border: 1px solid;" 
         id='friend${group.name }'></div>
 	</c:forEach>
-  
+		
+	
+  </div>
 </body>
 </html>

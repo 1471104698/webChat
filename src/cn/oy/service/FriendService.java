@@ -20,9 +20,9 @@ public interface FriendService {
 	//修改昵称
 	int moNickName(Integer fid,Integer uid,String nickName);
 	//修改好友分组昵称
-	int moGroupName(String newName,Integer uid,String oldName);
+	int moGroupName(String newName,Integer uid,String oldName,List<Group> groups);
 	//创建好友分组
-	int createGroupName(String newName,Integer uid);
+	int createGroupName(String newName,Integer uid,List<Group> groups);
 	//修改好友所在分组
 	int moveFriend(Integer fid,Integer uid,String group);
 	

@@ -3,7 +3,6 @@ package cn.oy.socket;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.websocket.OnClose;
@@ -13,58 +12,70 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import com.google.gson.Gson;
+
+import cn.oy.dao.ChatDao;
+import cn.oy.pojo.User;
 import cn.oy.vo.ContentVo;
 import cn.oy.vo.Message;
+import cn.oy.way.AllWay;
 
-@ServerEndpoint("/chatSocket")
-public class ChatSocket {
+@ServerEndpoint("/gchat")
+public class GroupChatSocket {
 
+	AllWay aw=(AllWay) util.MapIoc.MAP.get("aw");
+	ChatDao cd=(ChatDao) util.MapIoc.MAP.get("cd");
+	User user=null;
 	private String username;
+	private String account;
 	private Integer id;
 	private static Integer webCount=0;
 	private static List<Session> sessions=new ArrayList<>();		//将session对象存储起来
-	private static Map<String,Session> msu=new HashMap<>();			//通过用户id找session
-	private static Map<Integer,Session> miu=new HashMap<>();			//通过用户id找session
-	private static Map<String,Integer> mui=new HashMap<>();
+	private static Map<String,Session> msu=new HashMap<>();			//通过用户名找session
+	private static Map<Integer,String> miu=new HashMap<>();			//通过用户id找用户名
+	private static Map<Integer,Session> mis=new HashMap<>();			//通过用户id找session
+	private static Map<String,Integer> mui=new HashMap<>();			//通过用户名找id
+	private static Map<Integer,String> mia=new HashMap<>();			//通过用户id找账户
 	private static List<String>	names=new ArrayList<>();			//将用户名存储起来
 	private static List<Integer> ids=new ArrayList<>();			//将用户名存储起来
+	private static List<String>	accounts=new ArrayList<>();			//将用户账户存储起来
 	Gson gson=(Gson) util.MapIoc.MAP.get("gson");
 	
 	
 	@OnOpen
 	public void open(Session session) {
 		//当前webSocket的session对象，不是servlet的session,不能从中取到用户信息
-		System.out.println("此处是ChatSocket，，config..");
 		String queryString = session.getQueryString();		//得到的是username=oy
-		System.out.println(queryString);
 		
-		username=queryString.split("=")[2];
-		String str=queryString.split("=")[1];
-		id =Integer.parseInt(str.split("&")[0]);
+		account=queryString.split("=")[1];
+		System.out.println("account="+account);
+		this.user=aw.getUserByAccount(account);
+		id=user.getId();
+		username=user.getName();
 		
-	
 		addWebCount();
+		accounts.add(account);
 		names.add(username);
 		ids.add(id);
 		sessions.add(session);
 		msu.put(username, session);	//将用户名和session对象关联起来
-		miu.put(id, session);	
+		miu.put(id, username);	//将用户名和id对象关联起来
+		mis.put(id, session);	
 		mui.put(username,id);
+		mia.put(id, account);
 		String msg="欢迎"+username+"进入聊天室!!!<br/>";
 		
 		Message message=new Message();
 		message.setWelcome(msg);
 		message.setUsernames(names);
 		message.setIds(ids);
+		message.setAccounts(accounts);
 		
-		broadcast(sessions,message.toJson()); //干嘛的
+		broadcast(sessions,message.toJson()); 
 		}
 
 	
 	public void broadcast(List<Session> ss,String msg) {		//广播的实现
-		
-		for(Iterator<Session> iterator=ss.iterator();iterator.hasNext();) {		//遍历用户，给每个用户都发送一次信息
-			Session session=(Session)iterator.next();
+		for(Session session :ss) {		//遍历用户，给每个用户都发送一次信息
 			try {
 				session.getBasicRemote().sendText(msg);
 			} catch (IOException e) {
@@ -98,23 +109,17 @@ public class ChatSocket {
 	public void message(Session session,String json) {
 		
 		ContentVo vo=gson.fromJson(json, ContentVo.class);//gson.fromJson()该方法将json对象转换成实体类对象
-			//比如json字符串为：[{“name”:”name0”,”age”:0}]
-			//Person person = gson.fromJson(str, Person.class);
-		
-		if(vo.getType()==1) {
-			//给所有人广播，还要让所有人知道是谁说的
+		System.out.println("vo.getType()="+vo.getType());
+		if(vo.getType()==1) {		//广播，相当于群发
 			Message message=new Message();
-			
-//			message.setUsernames(names); 没必要再放入名字了
-			message.setContent(username, vo.getMsg());
-			
-			//根据username 如果能找到对应的session对象	
-			broadcast(sessions, message.toJson());			//广播，相当于群发
-		}else {					//私聊
-			String to = vo.getTo();	//得到选中的用户名
-			Session to_session = msu.get(to);
-			Message message=new Message();			
-			message.setContent(username, "<font color=red>私聊："+vo.getMsg()+"</font>");		//
+			message.setContent(username, vo.getMsg());			
+			broadcast(sessions, message.toJson());			
+		}else {						//群员私聊
+			Integer to = vo.getTo();	//得到选中的用户id
+			Session to_session = mis.get(to);
+			System.out.println("to_session="+to_session);
+			Message message=new Message();		
+			message.setContent(username, "<font color=red>私人信息："+vo.getMsg()+"</font>");		//
 			try {
 				to_session.getBasicRemote().sendText(message.toJson());		//给单个人发
 			} catch (IOException e) {
@@ -123,6 +128,7 @@ public class ChatSocket {
 			}
 		}
 	}
+	
 	
 	public static int getWebCount() {
 		return webCount;

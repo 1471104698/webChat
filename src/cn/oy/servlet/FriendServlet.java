@@ -10,8 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import cn.oy.service.FriendService;
+import cn.oy.way.AllWay;
 import net.sf.json.JSONArray;
-import cn.oy.dao.WayDao;
+import cn.oy.pojo.Group;
 import cn.oy.pojo.User;
 /**
  * Servlet implementation class FriendServlet
@@ -42,24 +43,27 @@ public class FriendServlet extends HttpServlet {
 		String gname=req.getParameter("gname");
 		if(gname!=null) {		//不为空执行以下步骤
 			int gh=Integer.parseInt(req.getParameter("gh"));
-			if(gh==1||gh==2) {						
+			if(gh==1||gh==2) {
+				User user=(User) req.getSession().getAttribute("user");		//得到当前用户
+				List<Group> groups=user.getGroups();
 				uid=Integer.parseInt(req.getParameter("uid"));
 				if(gh==1) {											//修改好友分组名称
 				String oldgname=req.getParameter("oldgname");
-				result=fs.moGroupName(gname, uid, oldgname);
+				result=fs.moGroupName(gname, uid, oldgname,groups);
 				System.out.println("result="+result);
 			}else{														//创建分组
-				result=fs.createGroupName(gname, uid);		
+				result=fs.createGroupName(gname, uid,groups);		
 			}
 				if(result>0) {
-				User user=(User) req.getSession().getAttribute("user");
 				user.setGroups(fs.groupsService(uid));					//更新好友列表菜单
 				req.getSession().setAttribute("user", user);
 				out.print("true");
 				}
-				else {
+				else if(result==-1){
 					out.print("false");
 					}
+				else
+					out.print("exist");
 			}else {							//查找某个分组下的好友
 			uid=((User)req.getSession().getAttribute("user")).getId();
 			List<User> friends = fs.friendsService(uid, gname);
@@ -104,8 +108,8 @@ public class FriendServlet extends HttpServlet {
 		}else if(ch==3){											//查看信息
 			User user=null;
 			if(fid==uid) {
-				WayDao wy=(WayDao) util.MapIoc.MAP.get("wy");
-				user=wy.getUserByID(uid);
+				AllWay aw=(AllWay) util.MapIoc.MAP.get("aw");
+				user=aw.getUserByID(uid);
 			}
 			else
 			user=fs.SeeFriendService(fid,uid);

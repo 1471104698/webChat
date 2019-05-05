@@ -6,10 +6,10 @@ import cn.oy.service.UpdatePwdService;
 
 public class UpdatePwdServiceImpl implements UpdatePwdService {
 
-	UserDao ud=new ImplD();
 	//更新密码
 	@Override
 	public int updatePwd(String newPwd,String cfPwd, String account) {
+		UserDao ud=new ImplD();
 		if(!newPwd.equals(cfPwd))
 			return -2;
 

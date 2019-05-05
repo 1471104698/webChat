@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import cn.oy.pojo.User;
 import cn.oy.service.FriendService;
+import cn.oy.service.GroupChatService;
 import cn.oy.service.LoginService;
 
 /**
@@ -32,6 +33,7 @@ public class LoginServlet extends HttpServlet {
 		req.setCharacterEncoding("UTF-8");
 		LoginService ls=(LoginService) util.MapIoc.MAP.get("ls");
 		FriendService fs=(FriendService) util.MapIoc.MAP.get("fs");
+		GroupChatService gcs=(GroupChatService) util.MapIoc.MAP.get("gcs");
 		PrintWriter out =resp.getWriter();
 		String vcode=req.getParameter("vcode");
 		String ocode=(String) req.getSession().getAttribute("ocode");
@@ -49,8 +51,9 @@ public class LoginServlet extends HttpServlet {
 		User u=ls.checkLogin(account, pwd);
 		if(u!=null) {
 			out.print("yes");
-			u.setGroups(fs.groupsService(u.getId()));
-			System.out.println("user="+u);
+			u.setGroups(fs.groupsService(u.getId()));		//得到用户好友列表菜单
+			u.setGroupChats(gcs.getGroupChat(u.getId()));	//得到用户加入的群
+			System.out.println("群聊="+gcs.getGroupChat(u.getId()));
 			req.getSession().setAttribute("user", u);
 		}else {
 			out.print("error");				  

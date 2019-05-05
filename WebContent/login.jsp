@@ -84,8 +84,8 @@
 		<li><input type="submit" value="登录">&emsp;&emsp;	
 		<input type="reset"><br>&emsp;&emsp;&emsp;</li>	
 		<li><h1 class="login">其他功能：</h1></li>
-		<li><a href="user/reg.jsp" >注册</a>&emsp;&emsp;
-		<a href="user/find.jsp" >找回密码</a></li>	
+		<li><a href="features/reg.jsp" >注册</a>&emsp;&emsp;
+		<a href="features/find.jsp" >找回密码</a></li>	
 		</ul>		
 		</form>	
 

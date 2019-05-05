@@ -8,13 +8,17 @@ import cn.oy.service.LoginService;
 public class LoginServiceImpl implements LoginService {
 	
 //	UserDao ud=(UserDao) ioc.MapIoc.MAP.get("ud");
-	UserDao ud=new ImplD();
+	UserDao ud=null;	//		在外面new下面登录校验的时候会出问题
+	User user=null;
 	@Override
 	public User checkLogin(String account, String pwd) {
-		if(ud.LoginDao(account,pwd)!=null) {
-			return ud.LoginDao(account, pwd);
+		ud=new ImplD();
+		if(null!=account&&null!=pwd) {
+		user=ud.LoginDao(account,pwd);
+		return user;
 		}
 		return null;
+
 	}
 	
 	@Override

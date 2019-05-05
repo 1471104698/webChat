@@ -7,10 +7,12 @@ import cn.oy.service.RegService;
 
 public class RegServiceImpl implements RegService {
 
-	UserDao ud=new ImplD();
+	
 	@Override
 	public int regService(User user) {
-		if(ud.isEmpty(user.getAccount())==null) {
+		UserDao ud=new ImplD();
+//		UserDao ud=(UserDao) util.MapIoc.MAP.get("ud");
+		if(null==ud.isEmpty(user.getAccount())) {
 			return ud.regDao(user);
 		}
 		return -1;

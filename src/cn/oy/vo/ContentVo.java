@@ -2,13 +2,14 @@ package cn.oy.vo;
 
 public class ContentVo {
 	
-	private String to;
+	private Integer to;
 	private String msg;
 	private Integer type;
-	public String getTo() {
+
+	public Integer getTo() {
 		return to;
 	}
-	public void setTo(String to) {
+	public void setTo(Integer to) {
 		this.to = to;
 	}
 	public String getMsg() {

@@ -7,13 +7,12 @@ import com.google.gson.Gson;
 
 import cn.oy.dao.ChatDao;
 import cn.oy.dao.UserDao;
-import cn.oy.dao.WayDao;
 import cn.oy.daoImpl.ChatDaoImpl;
 import cn.oy.daoImpl.ImplD;
-import cn.oy.daoImpl.WayDaoImpl;
 import cn.oy.service.LoginService;
 import cn.oy.service.FindPwdService;
 import cn.oy.service.FriendService;
+import cn.oy.service.GroupChatService;
 import cn.oy.service.PageService;
 import cn.oy.service.RegService;
 import cn.oy.service.UpdateInfoService;
@@ -21,10 +20,12 @@ import cn.oy.service.UpdatePwdService;
 import cn.oy.serviceImpl.LoginServiceImpl;
 import cn.oy.serviceImpl.FindPwdServiceImpl;
 import cn.oy.serviceImpl.FriendServiceImpl;
+import cn.oy.serviceImpl.GroupChatServiceImpl;
 import cn.oy.serviceImpl.PageServiceImpl;
 import cn.oy.serviceImpl.RegServiceImpl;
 import cn.oy.serviceImpl.UpdateInfoServiceImpl;
 import cn.oy.serviceImpl.UpdatePwdServiceImpl;
+import cn.oy.way.AllWay;
 
 public class MapIoc {
 
@@ -50,11 +51,12 @@ public class MapIoc {
 		MAP.put("ps", ps);
 		UpdateInfoService uis=new UpdateInfoServiceImpl();
 		MAP.put("uis", uis);
-		WayDao wy=new WayDaoImpl();
-		MAP.put("wy", wy);
+		AllWay aw=new AllWay();
+		MAP.put("aw", aw);
 		ChatDao cd=new ChatDaoImpl();
 		MAP.put("cd", cd);
-		
+		GroupChatService gcs=new GroupChatServiceImpl();
+		MAP.put("gcs", gcs);
 		
 	}
 }

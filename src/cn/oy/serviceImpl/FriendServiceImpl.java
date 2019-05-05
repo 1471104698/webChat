@@ -18,7 +18,7 @@ public class FriendServiceImpl implements FriendService {
 			return 0;
 		if(ud.CheckFriendDao(fid, uid)>0)	//已经是好友	
 			return -2;
-		if(ud.isEmpty(fid)==null) 		//添加的用户为空
+		if(null==ud.isEmpty(fid)) 		//添加的用户为空
 			return -1;
 				
 		return ud.AddFriendDao(fid, uid, group);
@@ -30,7 +30,7 @@ public class FriendServiceImpl implements FriendService {
 	public int DelFriendService(Integer fid, Integer uid) {
 		if(fid==uid)		//删除的是自己
 			return 0;
-		if(ud.isEmpty(fid)==null) 		//删除的用户为空
+		if(null==ud.isEmpty(fid)) 		//删除的用户为空
 			return -1;
 		if(ud.CheckFriendDao(fid, uid)<0)	//不是自己好友	
 			return -2;
@@ -40,7 +40,7 @@ public class FriendServiceImpl implements FriendService {
 	//查看好友
 	@Override
 	public User SeeFriendService(Integer fid,Integer uid) {
-		if(ud.isEmpty(fid)!=null) 		//查看的用户为空
+		if(null!=ud.isEmpty(fid)) 		//查看的用户为空
 			return ud.SeeFriendDao(fid,uid);
 		
 		return null;
@@ -49,7 +49,7 @@ public class FriendServiceImpl implements FriendService {
 	//得到某个分组下的好友
 	@Override
 	public List<User> friendsService(Integer uid, String group) {
-		if(group!=null)
+		if(null!=group)
 		return ud.friendsDao(uid, group);
 		return null;
 	}
@@ -57,13 +57,16 @@ public class FriendServiceImpl implements FriendService {
 	//得到用户的所有分组
 	@Override
 	public List<Group> groupsService(Integer uid) {
+		if(null!=ud.isEmpty(uid)) {
 		return ud.groupsDao(uid);
+		}
+		return null;
 	}
 
 	//修改昵称
 	@Override
 	public int moNickName(Integer fid, Integer uid, String nickName) {
-		if(ud.isEmpty(fid)!=null) {
+		if(null!=ud.isEmpty(fid)) {
 			return ud.moNickName(fid, uid, nickName);
 		}
 			
@@ -72,8 +75,14 @@ public class FriendServiceImpl implements FriendService {
 
 	//修改好友分组名称
 	@Override
-	public int moGroupName(String newName, Integer uid, String oldName) {
-		if(ud.isEmpty(uid)!=null) {
+	public int moGroupName(String newName, Integer uid, String oldName,List<Group> groups) {
+		if(null!=ud.isEmpty(uid)) {
+			if(null!=groups) {
+			for(Group group:groups) {
+				if(group.getName().equals(newName))
+					return -2;							
+				}		
+			}
 			return ud.moGroupNameDao(newName, uid, oldName);
 		}
 		else
@@ -82,8 +91,14 @@ public class FriendServiceImpl implements FriendService {
 
 	//创建好友分组
 	@Override
-	public int createGroupName(String newName, Integer uid) {
-		if(ud.isEmpty(uid)!=null) {
+	public int createGroupName(String newName, Integer uid,List<Group> groups) {
+		if(null!=ud.isEmpty(uid)) {
+		if(null!=groups) {
+		for(Group group:groups) {
+			if(group.getName().equals(newName))
+				return -2;
+			}		
+		}
 			return ud.createGroupNameDao(newName, uid);
 		}
 		return -1;
@@ -94,7 +109,7 @@ public class FriendServiceImpl implements FriendService {
 	public int moveFriend(Integer fid,Integer uid,String group) {
 		if(ud.CheckFriendDao(fid, uid)<0)
 			return -1;
-		if(ud.isEmpty(fid)!=null&&ud.isEmpty(uid)!=null)
+		if(null!=ud.isEmpty(fid)&&null!=ud.isEmpty(uid))
 			return ud.moveFriendDao(fid, uid, group);
 		return -1;
 	}
