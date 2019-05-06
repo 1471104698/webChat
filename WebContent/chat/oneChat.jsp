@@ -130,7 +130,12 @@
 				method:'post',
 				url:'${pageContext.request.contextPath}/PageServlet',
 				async:true,		//异步
-				data:{"fid":who,"uid":uid,"currentPage":currentPage},
+				data:{
+					"xid":who,
+					"uid":uid,
+					"currentPage":currentPage,
+					"way":1
+				},
 				success:function(data){
 					//alert(data);
 					var majorList=eval("("+data+")");

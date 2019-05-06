@@ -113,7 +113,7 @@ public class GroupChatSocket {
 	@OnMessage
 	public void message(Session session,String json) {
 		String msg="";
-		ContentVo vo=gson.fromJson(json, ContentVo.class);//System.out.println("vo.getType()="+vo.getType());
+		ContentVo vo=gson.fromJson(json, ContentVo.class);
 		String useraccount=mia.get(id);			//通过id找到账户
 		Message message=new Message();	
 		//存储到数据库的信息和时间	
@@ -123,25 +123,26 @@ public class GroupChatSocket {
 			message.setContent(username, vo.getMsg());			
 			broadcast(sessions, message.toJson());
 			msg=username+"("+useraccount+")"+"："+date+vo.getMsg()+"\r\n";
-			msg=username+"("+useraccount+")"+"："+date+"<font color=red>私人信息："+vo.getMsg()+"</font>"+"\r\n";	
+
 			//存储到数据库
-			 aw.recordGroup(id,groupId, msg);
+			 aw.recordGroup(groupId, msg);
 			
-		}else {						//群员私聊
-			Integer to = vo.getTo();	//得到选中的用户id
-			Session to_session = mis.get(to);
-			System.out.println("to_session="+to_session);
-			message.setContent(username, "<font color=red>私人信息："+vo.getMsg()+"</font>");		//
-			try {
-				to_session.getBasicRemote().sendText(message.toJson());		//给单个人发
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			msg=username+"("+useraccount+")"+"："+date+"<font color=red>私人信息："+vo.getMsg()+"</font>"+"\r\n";	
-			//存储到数据库
-			 aw.recordGroup(id,groupId, msg);		//以私聊信息形式存到聊天记录		
-		}	
+		}
+//		else {						//群员私聊
+//			Integer to = vo.getTo();	//得到选中的用户id
+//			Session to_session = mis.get(to);
+//			System.out.println("to_session="+to_session);
+//			message.setContent(username, "<font color=red>私人信息："+vo.getMsg()+"</font>");		//
+//			try {
+//				to_session.getBasicRemote().sendText(message.toJson());		//给单个人发
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			msg=username+"("+useraccount+")"+"："+date+"<font color=red>私人信息："+vo.getMsg()+"</font>"+"\r\n";	
+//			//存储到数据库
+//			 aw.recordGroup(id,to, msg);		//以私聊信息形式存到聊天记录		
+//		}	
 	}
 	
 	

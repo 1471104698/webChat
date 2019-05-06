@@ -190,6 +190,39 @@
 				}
 			});
 	 }
+	
+	 function SeeData(data){		//查看聊天记录
+		 if('start'==data)
+			 currentPage=1;
+		 if('-1'==data&&currentPage>1)
+			 currentPage--;
+		 if('+1'==data&&currentPage<totalPage)
+			 currentPage++;
+		 if('finally'==data)
+			 currentPage=totalPage;
+		 $.ajax({
+				method:'post',
+				url:'${pageContext.request.contextPath}/PageServlet',
+				async:true,		//异步
+				data:{
+					"xid":groupId,
+					"uid":uid,
+					"currentPage":currentPage,
+					"way":2	
+				},
+				success:function(data){
+					//alert(data);
+					var majorList=eval("("+data+")");
+					 if(undefined!=majorList)
+					 {
+						 $("#recordArea").html("");
+						 $.each(majorList, function (i, v){
+							 $("#recordArea").append(v+"<br/>");
+						 });
+					 }
+				}
+			});
+	 }
 
 </script>
 </head>
@@ -197,19 +230,21 @@
 	
 	<h1>Web聊天室</h1>
 	<hr>
-	<div style="border:1px solid black; width:600px;height:600px;
+	
+	<div id="announcement" style="border:1px solid black; width:1500px;height:80px;"></div>
+	<div style="border:1px solid black; width:600px;height:580px;
 	float:left;">
 	<div
-        style="width: 600px; height: 550px; overflow: scroll; border: 1px solid;"
+        style="width: 600px; height: 500px; overflow: scroll; border: 1px solid;"
         id="content"></div>
 
 	<div  style="border-top:1px solid black; width:400px;height:50px;">
 	<input id="msg"/><button onclick="subSend()">send</button>
 	</div>
 	</div>
-	<div id="userList" style="border:1px solid black; width:220px;height:600px; overflow: scroll;
+	<div id="userList" style="border:1px solid black; width:220px;height:580px; overflow: scroll;
 	float:left"></div>
-	<div id="recordArea" style="border:1px solid black; width:450px;height:600px; overflow: scroll;
+	<div id="recordArea" style="border:1px solid black; width:450px;height:580px; overflow: scroll;
 	float:left">
 	</div>
 	
