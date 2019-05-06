@@ -114,5 +114,14 @@ public class FriendServiceImpl implements FriendService {
 		return -1;
 	}
 
+	//删除分组
+	@Override
+	public int deleteGroupName(String groupName, Integer uid) {
+		if(null!=groupName&&null!=ud.isEmpty(uid)) {
+			return ud.deleteGroupNameDao(groupName, uid);
+		}
+		return -1;
+	}
+
 
 }

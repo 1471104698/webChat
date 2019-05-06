@@ -29,7 +29,7 @@
                 return;
             }
         
-          ws.onmessage=function(event){
+          ws.onmessage=function(event){			//信息管道
        //		alert(event.data);
         	  eval("var msg="+event.data+";");	//eval可以将一个字符串转成本地代码来执行
         	  	     	  
@@ -59,7 +59,7 @@
 	}
 	
 	 
-	function Add(u){
+	function Add(u){			//添加好友
 		var flag=window.confirm("是否添加对方为好友");
 		if(flag){
 		$.ajax({
@@ -83,7 +83,7 @@
 		}
 	}
 	
-	function See(u){
+	function See(u){			//查看好友信息
 		$.ajax({
 			method:'post',
 			url:'${pageContext.request.contextPath}/FriendServlet',
@@ -99,7 +99,7 @@
 		});
 	}
 	
-	 function subSend(){
+	 function subSend(){			//发送信息
 		 var val=$("#msg").val();//得到用户聊天的信息--发出d
 		 if(val==""||val==null)
 			 return;
@@ -117,7 +117,7 @@
    		$("#msg").val("");  
    	}	
 
-	 function SeeData(data){
+	 function SeeData(data){		//查看聊天记录
 		 if('start'==data)
 			 currentPage=1;
 		 if('-1'==data&&currentPage>1)
@@ -160,7 +160,7 @@
 	<input id="msg"/><button onclick="subSend()">send</button>
 	</div>
 	</div>
-	<div id="userList" style="border:1px solid black; width:200px;height:600px; overflow: scroll;
+	<div id="userList" style="border:1px solid black; width:220px;height:600px; overflow: scroll;
 	float:left"></div>
 	<div id="recordArea" style="border:1px solid black; width:450px;height:600px; overflow: scroll;
 	float:left">

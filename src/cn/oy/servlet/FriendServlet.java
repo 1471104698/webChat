@@ -43,7 +43,7 @@ public class FriendServlet extends HttpServlet {
 		String gname=req.getParameter("gname");
 		if(gname!=null) {		//不为空执行以下步骤
 			int gh=Integer.parseInt(req.getParameter("gh"));
-			if(gh==1||gh==2) {
+			if(gh==1||gh==2||gh==3) {
 				User user=(User) req.getSession().getAttribute("user");		//得到当前用户
 				List<Group> groups=user.getGroups();
 				uid=Integer.parseInt(req.getParameter("uid"));
@@ -51,8 +51,10 @@ public class FriendServlet extends HttpServlet {
 				String oldgname=req.getParameter("oldgname");
 				result=fs.moGroupName(gname, uid, oldgname,groups);
 				System.out.println("result="+result);
-			}else{														//创建分组
+			}else if(gh==2){										//创建分组
 				result=fs.createGroupName(gname, uid,groups);		
+			}else{													//删除分组
+				result=fs.deleteGroupName(gname, uid);
 			}
 				if(result>0) {
 				user.setGroups(fs.groupsService(uid));					//更新好友列表菜单
@@ -74,6 +76,8 @@ public class FriendServlet extends HttpServlet {
 			out.close();
 			return;	
 		}
+			
+			
 		
 		/**
 		 * 对好友的操作

@@ -36,11 +36,11 @@
 					});	
 				}
 			});
-		}		
-		function Chat(fid){		
+		}			
+		function Chat(fid){					//与好友私聊
 				window.location.href="${pageContext.request.contextPath}/ChatServlet?fid="+fid; 												
 			}
-		function Del(u){
+		function Del(u){				//删除好友
 			var flag=window.confirm("是否删除好友？？？");
 			if(flag){
 			$.ajax({
@@ -61,7 +61,7 @@
 			
 			}
 		}
-		function See(u){
+		function See(u){				//查看好友信息
 			$.ajax({
 				method:'post',
 				url:'${pageContext.request.contextPath}/FriendServlet',
@@ -77,7 +77,7 @@
 			});		
 		}		
 	
-	function MoGroup(oldGroupName){	
+	function MoGroup(oldGroupName){					//修改分组名
 		var flag=window.confirm("是否修改分组？？？");
 		if(flag){
 		var newGroupName=$("#"+oldGroupName).val();
@@ -110,7 +110,7 @@
 		}
 	}
 	
-	function Create(){	
+	function Create(){					//创建分组
 
 		var groupName=$("#create").val();
 		if(groupName==""||groupName==undefined)
@@ -137,27 +137,134 @@
 		});
 					
 	}
+	
+	function DeleteGroup(groupName){			//删除分组
+		var flag=window.confirm("选定的分组将被删除，组内若有好友则将被移至默认分组'我的好友'   ,确定删除该分组么");
+		if(flag){
+			if(groupName=='我的好友'){
+				alert("默认分组名不能进行修改");
+				return;
+			}
+			$.ajax({
+				method:'post',
+				url:'${pageContext.request.contextPath}/FriendServlet',
+				async:true,		//异步
+				data:{"gname":groupName,"uid":uid,"gh":"3"},
+					
+				success:function(result){
+					if(result=="true"){
+						alert("分组删除成功");
+					window.location.href="${pageContext.request.contextPath}/user/user.jsp"
+					}
+					else
+						alert("分组删除失败");
+				}			
+			});
+		}
 		
-	function Out(){
+	}
+		
+	function Out(){				//退出账号
 		var flag=window.confirm("你真的要退出么？？？");
 		if(flag){
 			window.location.href="${pageContext.request.contextPath }/UserOutServlet"; 
 		}
 	}
 	
-	function Join(data){
+	function Join(data){			//进入群聊
+		//alert(data);
 		if(null!=data)
-		window.location.href="${pageContext.request.contextPath }/chat/chat.jsp"; 
+		window.location.href="${pageContext.request.contextPath }/chat/chat.jsp?groupId="+data; 
 	}
 	
-	function Search(){
-		var value=$("#find").val();
-		if(typeof value==number){
-			&.ajax({
-				
-			});
+	
+	function Search(){				//找群
+
+		var value=$("#find").val(); 
+		if(""==value){
+			alert("查询条件不能为空");
+			return;
 		}
-			
+		//alert(value);
+		 $("#groupChat").html("");			//清空
+		$.ajax({
+			method:'post',
+			url:'${pageContext.request.contextPath}/GroupChatServlet',
+			async:true,		//异步
+			data:{"value":value,"way":"1"},
+				
+			success:function(data){
+				var groups=eval("("+data+")");//处理，将json字符串转换为对象  
+				//alert(data);
+				 $("#groupChat").html("");			//清空
+				$.each(groups, function (i, v) {
+					$("#groupChat").append(v.name+"("+v.id+")"+"<input type=button onclick='Attend("+v.id+")'  value='加群'>"+"<br/>");		
+				});	
+			}
+		});	
+	
+	}
+	function Attend(data){		//加群,此处值为群id
+		var flag=window.confirm("是否加入该群？？？");
+		if(flag){
+			$.ajax({
+				method:'post',
+				url:'${pageContext.request.contextPath}/GroupChatServlet',
+				async:true,		//异步
+				data:{"value":data,"uid":uid,"way":"2"},
+				success:function(result){
+					if(result=="true"){
+						alert("加群成功");
+						window.location.href="${pageContext.request.contextPath }/user/user.jsp"; 
+					}else if(result=="false")
+						alert("加群失败");
+					else
+						alert("你已是该群群员，无需重复加入");
+				}			
+			}); 
+		}
+	}
+	function OutGroupChat(data){		//退群,此处值为群id
+		var flag=window.confirm("确定退群？？？");
+		if(flag){
+			$.ajax({
+				method:'post',
+				url:'${pageContext.request.contextPath}/GroupChatServlet',
+				async:true,		//异步
+				data:{"value":data,"uid":uid,"way":"3"},
+				success:function(result){
+					if(result=="true"){
+						alert("成功退出该群");
+						window.location.href="${pageContext.request.contextPath }/user/user.jsp"; 
+					}else
+						alert("退群失败");
+				}			
+			}); 
+		}
+	}
+	
+	function CreateGroup(){
+		var value=$("#createGroup").val();
+		if(""==value){
+			alert("群名不能为空");
+			return;
+		}
+		var flag=window.confirm("是否创建");
+		if(flag){
+		$.ajax({
+			method:'post',
+			url:'${pageContext.request.contextPath}/GroupChatServlet',
+			async:true,		//异步
+			data:{"groupName":value,"uid":uid,"way":"4"},
+			success:function(result){
+				if(result=="true"){
+					alert("成功创建");
+					window.location.href="${pageContext.request.contextPath }/user/user.jsp"; 
+				}else
+					alert("创建失败");
+			}			
+		}); 
+		}
 	}
 		
 </script>
@@ -173,17 +280,33 @@
 	   <br/>	
 	<h2>我加入的群聊：</h2>
 	<c:forEach items="${user.groupChats }" var="groupChat">
-	${groupChat.name }<button onclick="Join('${groupChat }')">进入群聊</button>
+	${groupChat.name }(${groupChat.id })
+	<c:if test="${not empty groupChat.name}">			<!-- 不为空则显示 -->
+	<button onclick="Join('${groupChat.id }')">进入群聊</button>
+	<button onclick="OutGroupChat('${groupChat.id }')">退群</button><br/>
+	</c:if>
 	</c:forEach>
+	<br/>
+	<h3>创建群聊：</h3>
+	输入群名称：
+	<input id="createGroup"><button onclick="CreateGroup()">点击创建</button><br/>
+	
+	
 	<h3>找群：</h3>
 	<input id="find">
 	<button onclick="Search()">点击查找</button>
+	<div  style="width: 400px; height: 150px; overflow: scroll; border: 1px solid;" 
+        id="groupChat"></div><br/><br/>
 	<div>
+	
+	
+	
 	<input id="create"><button onclick="Create()">创建分组</button>
 	<h2>好友列表：</h2>
 	<c:forEach items="${user.groups }" var="group">
 		<br/><input type="button" onclick="Get('${group.name }')" id="" value="${group.name }"><font color=red>(点击查看该分组下的好友)</font>
 		<input id="${group.name }"><button onclick="MoGroup('${group.name }')">修改分组名</button>
+		<button onclick="DeleteGroup('${group.name }')">删除分组</button>
 		<div  style="width: 400px; height: 150px; overflow: scroll; border: 1px solid;" 
         id='friend${group.name }'></div>
 	</c:forEach>

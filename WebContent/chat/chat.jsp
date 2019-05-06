@@ -12,9 +12,11 @@
 	var account='${sessionScope.user.account}';
 	var currentPage='${sessionScope.page.currentPage}';
 	var totalPage='${sessionScope.page.totalPage}';
+	var groupId=window.location.href.split("?")[1].split("=")[1];		//页面跳转带参接收
+	//alert(groupId);
 	//加双引号（单引号）是因为${sessionScope.username}是字符串，不加会当成是变量
 	var ws;		//一个ws对象就是一个通信管道,在外面是全局变量
-	var target="ws://localhost:8888/1webchat/gchat?account="+account;		//url
+	var target="ws://localhost:8888/1webchat/gchat?account="+account+"&groupId="+groupId;		//url
 	window.onload=function(){
 		//进入聊天页面，就打开socket通道
 				
@@ -27,7 +29,7 @@
                 return;
             }
         
-          ws.onmessage=function(event){
+          ws.onmessage=function(event){			//信息管道
         	  eval("var msg="+event.data+";");	//eval可以将一个字符串转成本地代码来执行
         	  	     	  
         	  if(undefined!=msg.welcome){
@@ -36,7 +38,7 @@
 			  if(undefined!=msg.usernames){		//未定义的值和定义未赋值的为undefined，null是一种特殊的object,NaN是一种特殊的number
 				  $("#userList").html("");		//将内容清空,如不执行一个用户退出再进来会显示两次名字
  					$(msg.ids).each(function(i,v){		//遍历到第i个，v为第i个的值			  
-					  $("#userList").append("<input type=checkbox   value='"+msg.usernames[i]+"'/>"+msg.usernames[i]+" "+
+					  $("#userList").append("<input type=checkbox   value='"+msg.ids[i]+"'/>"+msg.usernames[i]+" "+
 					 "<input type=button  onclick='Add("+v+")' value='添加好友'>"+
 					 "<input type=button  onclick='Del("+v+")' value='删除好友'>"+
 					 "<input type=button  onclick='See("+v+")' value='查看信息'>"	+	 
@@ -55,7 +57,7 @@
           }; 
 	}
 	
-	 function subSend(){
+	 function subSend(){			//发送信息
 		 var val=$("#msg").val();//得到用户聊天的信息--发出
 		 var u=$("#userList :checked");			//ps:要加个空格，不然取不到值。。。
 	/* 	  console.info(u.length);  */
@@ -79,7 +81,7 @@
    		$("#msg").val("");  
    	}	
 	 
-	function Add(u){
+	function Add(u){			//添加好友
 		var flag=window.confirm("是否添加对方为好友");
 		if(flag){
 		$.ajax({
@@ -111,7 +113,7 @@
 		}
 	}
 	
-	function Del(u){
+	function Del(u){			//删除好友
 		var flag=window.confirm("是否删除好友？？？");
 		if(flag){
 		$.ajax({
@@ -144,8 +146,8 @@
 		});
 		
 		}
-	}
-	function See(u){
+	}	
+	function See(u){			//查看好友信息
 		$.ajax({
 			method:'post',
 			url:'${pageContext.request.contextPath}/FriendServlet',
@@ -161,7 +163,33 @@
 		});
 	}
 	
-	
+	function SeeData(data){		//查看聊天记录
+		 if('start'==data)
+			 currentPage=1;
+		 if('-1'==data&&currentPage>1)
+			 currentPage--;
+		 if('+1'==data&&currentPage<totalPage)
+			 currentPage++;
+		 if('finally'==data)
+			 currentPage=totalPage;
+		 $.ajax({
+				method:'post',
+				url:'${pageContext.request.contextPath}/PageServlet',
+				async:true,		//异步
+				data:{"fid":who,"uid":uid,"currentPage":currentPage},
+				success:function(data){
+					//alert(data);
+					var majorList=eval("("+data+")");
+					 if(undefined!=majorList)
+					 {
+						 $("#recordArea").html("");
+						 $.each(majorList, function (i, v){
+							 $("#recordArea").append(v+"<br/>");
+						 });
+					 }
+				}
+			});
+	 }
 
 </script>
 </head>
@@ -169,18 +197,27 @@
 	
 	<h1>Web聊天室</h1>
 	<hr>
-	<div id="container" style="border:1px solid black; width:400px;height:400px;
+	<div style="border:1px solid black; width:600px;height:600px;
 	float:left;">
 	<div
-        style="width: 400px; height: 350px; overflow: scroll; border: 1px solid;"
+        style="width: 600px; height: 550px; overflow: scroll; border: 1px solid;"
         id="content"></div>
 
 	<div  style="border-top:1px solid black; width:400px;height:50px;">
 	<input id="msg"/><button onclick="subSend()">send</button>
 	</div>
 	</div>
-	<div id="userList" style="border:1px solid black; width:150px;height:400px;
+	<div id="userList" style="border:1px solid black; width:220px;height:600px; overflow: scroll;
 	float:left"></div>
+	<div id="recordArea" style="border:1px solid black; width:450px;height:600px; overflow: scroll;
+	float:left">
+	</div>
+	
+	<button onclick="SeeData()">点击查看消息记录</button><br/>
+	<span><button onclick="SeeData('start')">首页</button></span>
+	<span><button onclick="SeeData('-1')">上一页</button></span>
+	<span><button onclick="SeeData('+1')">下一页</button></span>
+	<span><button onclick="SeeData('finally')">尾页</button></span>   
 </body>
 </html>
 

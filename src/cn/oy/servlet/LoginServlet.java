@@ -53,7 +53,6 @@ public class LoginServlet extends HttpServlet {
 			out.print("yes");
 			u.setGroups(fs.groupsService(u.getId()));		//得到用户好友列表菜单
 			u.setGroupChats(gcs.getGroupChat(u.getId()));	//得到用户加入的群
-			System.out.println("群聊="+gcs.getGroupChat(u.getId()));
 			req.getSession().setAttribute("user", u);
 		}else {
 			out.print("error");				  

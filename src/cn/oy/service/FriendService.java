@@ -25,5 +25,7 @@ public interface FriendService {
 	int createGroupName(String newName,Integer uid,List<Group> groups);
 	//修改好友所在分组
 	int moveFriend(Integer fid,Integer uid,String group);
+	//删除分组
+	int deleteGroupName(String groupName,Integer uid);
 	
 }

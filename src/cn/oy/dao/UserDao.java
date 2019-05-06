@@ -41,7 +41,8 @@ public interface UserDao {
 	int createGroupNameDao(String newName,Integer uid);
 	//修改好友所在分组
 	int moveFriendDao(Integer fid,Integer uid,String group);
-	
+	//删除分组
+	int deleteGroupNameDao(String groupName,Integer uid);
 	
 //	// 查询用户总数
 //	int getTotalDao(String uid);

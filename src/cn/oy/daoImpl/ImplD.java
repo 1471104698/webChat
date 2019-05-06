@@ -18,7 +18,7 @@ public class ImplD implements UserDao {
 	PreparedStatement psta=null;
 	ResultSet rs=null;
 	User u=null;
-	
+	int result=-1;
 	
 	//登录并得到用户信息
 	@Override
@@ -149,7 +149,6 @@ public class ImplD implements UserDao {
 	//用户注册
 	@Override
 	public int regDao(User user) {
-		int result=-1;
 		try {
 			con=du.getCon();
 			//创建Sql命令
@@ -187,7 +186,6 @@ public class ImplD implements UserDao {
 	//找回密码
 	@Override
 	public int findPwdDao(String account, String name, String tel) {
-		int result=-1;
 		try {
 			con=du.getCon();
 			String sql="select * from users where account=? and true_name=? and tel=?";
@@ -221,7 +219,6 @@ public class ImplD implements UserDao {
 	//修改密码
 	@Override
 	public int updatePwdDao(String newPwd, String account) {
-		int result=-1;
 		try {
 			
 			con=du.getCon();
@@ -252,7 +249,6 @@ public class ImplD implements UserDao {
 	//添加好友
 	@Override
 	public int AddFriendDao(Integer fid, Integer uid,String group) {
-		int result=-1;
 		try {		
 			con=du.getCon();
 			String sql="insert into friends (f_fid,f_uid,f_groupname) values (?,?,?)";
@@ -281,7 +277,6 @@ public class ImplD implements UserDao {
 	//删除好友
 	@Override
 	public int DelFriendDao(Integer fid, Integer uid) {
-		int result=-1;
 		try {		
 			con=du.getCon();
 			String sql="delete from friends where f_fid=? and f_uid=?";
@@ -353,7 +348,6 @@ public class ImplD implements UserDao {
 	//查询是否已经是好友
 	@Override
 	public int CheckFriendDao(Integer fid, Integer uid) {
-		int result=-1;
 		try {
 			con=du.getCon();
 			String sql="select * from friends where f_fid=? and f_uid=?";
@@ -387,7 +381,6 @@ public class ImplD implements UserDao {
 	//修改用户信息
 	@Override
 	public int updateInfoDao(User user) {
-		int result=-1;
 		try {
 			
 			con=du.getCon();
@@ -425,10 +418,6 @@ public class ImplD implements UserDao {
 		try {
 			con=du.getCon();
 			//创建Sql命令
-			/*
-			 * String sql="  select * from user ,friends where uid in " +
-			 * " (select f_fid from friends where f_uid=? and f_groupname=?)"; //
-			 */			//创建Sql命令对象
 			String sql="SELECT * FROM users u ,friends WHERE u.uid IN"
 					+ " (SELECT f_fid FROM friends WHERE f_uid=? AND f_groupname=? ) AND"
 					+ " f_fid=u.uid and f_uid=?";
@@ -477,7 +466,7 @@ public class ImplD implements UserDao {
 		try {
 			con=du.getCon();
 			//创建Sql命令
-			String sql="  select * from user_list where ul_uid =? ";
+			String sql="  select * from user_friendgroup where ul_uid =? ";
 						
 			//创建Sql命令对象
 			psta=(PreparedStatement) con.prepareStatement(sql);
@@ -512,7 +501,6 @@ public class ImplD implements UserDao {
 	//修改昵称
 	@Override
 	public int moNickName(Integer fid, Integer uid, String nickName) {
-		int result=-1;
 		try {		
 			con=du.getCon();
 			String sql="update friends set f_name=? where f_fid=? and f_uid=?";
@@ -542,18 +530,15 @@ public class ImplD implements UserDao {
 	//修改好友分组昵称
 	@Override
 	public int moGroupNameDao(String newName, Integer uid, String oldName) {
-		int result=-1;
 		try {		
 			con=du.getCon();
-			String sql="UPDATE user_list ul,friends f SET ul.ul_name=? ,f.f_groupname=?" + 
-					"WHERE ul_uid=? AND ul_name=? AND f_uid=? AND f_groupname=?";
+//			String sql="UPDATE user_friendgroup ul,friends f SET ul.ul_name=? ,f.f_groupname=?" + 
+//					"WHERE ul_uid=? AND ul_name=? AND f_uid=? AND f_groupname=?";
+			String sql="UPDATE user_friendgroup ul SET ul_name=? WHERE ul_uid=? AND ul_name=?";			//此处使用触发器修改在此列表下好友的分组
 			psta=con.prepareStatement(sql);
 			psta.setString(1, newName);
-			psta.setString(2, newName);
-			psta.setInt(3, uid);
-			psta.setString(4, oldName);
-			psta.setInt(5, uid);
-			psta.setString(6, oldName);
+			psta.setInt(2, uid);
+			psta.setString(3, oldName);
 			result=psta.executeUpdate();
 		} catch (SQLException e) {	
 			e.printStackTrace();
@@ -572,13 +557,13 @@ public class ImplD implements UserDao {
 		return result;
 	}
 
+	
 	//创建好友分组
 	@Override
 	public int createGroupNameDao(String newName, Integer uid) {
-		int result=-1;
 		try {		
 			con=du.getCon();
-			String sql="insert into  user_list (ul_name,ul_uid) values (?,?)";
+			String sql="insert into  user_friendgroup (ul_name,ul_uid) values (?,?)";
 			psta=con.prepareStatement(sql);
 			psta.setString(1, newName);
 			psta.setInt(2, uid);
@@ -602,7 +587,6 @@ public class ImplD implements UserDao {
 	//修改好友所在分组
 	@Override
 	public int moveFriendDao(Integer fid, Integer uid, String group) {
-		int result=-1;
 		try {		
 			con=du.getCon();
 			String sql="update friends set f_groupname=? where f_fid=? and f_uid=?";
@@ -610,6 +594,34 @@ public class ImplD implements UserDao {
 			psta.setString(1, group);
 			psta.setInt(2, fid);
 			psta.setInt(3, uid);
+			result=psta.executeUpdate();
+		} catch (SQLException e) {	
+			e.printStackTrace();
+		}catch(Exception e2) {
+			e2.printStackTrace();
+		}finally {
+			try {	//关闭资源
+			
+				du.close(psta, con);
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}catch(Exception e3) {
+				e3.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	
+	//删除分组
+	@Override
+	public int deleteGroupNameDao(String groupName, Integer uid) {
+		try {		
+			con=du.getCon();
+			String sql="DELETE FROM user_friendgroup WHERE ul_name=? AND ul_uid=?";		//使用触发器将该分组的好友转到默认分组“我的好友”
+			psta=con.prepareStatement(sql);
+			psta.setString(1, groupName);
+			psta.setInt(2, uid);
 			result=psta.executeUpdate();
 		} catch (SQLException e) {	
 			e.printStackTrace();

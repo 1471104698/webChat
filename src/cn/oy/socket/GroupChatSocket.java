@@ -1,7 +1,9 @@
 package cn.oy.socket;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +15,7 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import com.google.gson.Gson;
 
-import cn.oy.dao.ChatDao;
+import cn.oy.dao.ChatMsgDao;
 import cn.oy.pojo.User;
 import cn.oy.vo.ContentVo;
 import cn.oy.vo.Message;
@@ -23,11 +25,12 @@ import cn.oy.way.AllWay;
 public class GroupChatSocket {
 
 	AllWay aw=(AllWay) util.MapIoc.MAP.get("aw");
-	ChatDao cd=(ChatDao) util.MapIoc.MAP.get("cd");
+	ChatMsgDao cd=(ChatMsgDao) util.MapIoc.MAP.get("cd");
 	User user=null;
 	private String username;
 	private String account;
 	private Integer id;
+	private Integer groupId;
 	private static Integer webCount=0;
 	private static List<Session> sessions=new ArrayList<>();		//将session对象存储起来
 	private static Map<String,Session> msu=new HashMap<>();			//通过用户名找session
@@ -45,9 +48,11 @@ public class GroupChatSocket {
 	public void open(Session session) {
 		//当前webSocket的session对象，不是servlet的session,不能从中取到用户信息
 		String queryString = session.getQueryString();		//得到的是username=oy
-		
-		account=queryString.split("=")[1];
-		System.out.println("account="+account);
+		System.out.println("queryString="+queryString);
+		account=queryString.split("=")[1].split("&")[0];
+		groupId=Integer.parseInt(queryString.split("=")[2]);
+		System.out.println("account111="+account);
+		System.out.println("groupId="+groupId);
 		this.user=aw.getUserByAccount(account);
 		id=user.getId();
 		username=user.getName();
@@ -107,18 +112,25 @@ public class GroupChatSocket {
 	//Gson是谷歌推出的一个用于生成和解析JSON数据格式的工具；
 	@OnMessage
 	public void message(Session session,String json) {
-		
-		ContentVo vo=gson.fromJson(json, ContentVo.class);//gson.fromJson()该方法将json对象转换成实体类对象
-		System.out.println("vo.getType()="+vo.getType());
-		if(vo.getType()==1) {		//广播，相当于群发
-			Message message=new Message();
+		String msg="";
+		ContentVo vo=gson.fromJson(json, ContentVo.class);//System.out.println("vo.getType()="+vo.getType());
+		String useraccount=mia.get(id);			//通过id找到账户
+		Message message=new Message();	
+		//存储到数据库的信息和时间	
+		String date=new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss").format(new Date())+"\r\n";
+		int type=vo.getType();		//消息类型
+		if(type==1) {		//广播，相当于群发
 			message.setContent(username, vo.getMsg());			
-			broadcast(sessions, message.toJson());			
+			broadcast(sessions, message.toJson());
+			msg=username+"("+useraccount+")"+"："+date+vo.getMsg()+"\r\n";
+			msg=username+"("+useraccount+")"+"："+date+"<font color=red>私人信息："+vo.getMsg()+"</font>"+"\r\n";	
+			//存储到数据库
+			 aw.recordGroup(id,groupId, msg);
+			
 		}else {						//群员私聊
 			Integer to = vo.getTo();	//得到选中的用户id
 			Session to_session = mis.get(to);
 			System.out.println("to_session="+to_session);
-			Message message=new Message();		
 			message.setContent(username, "<font color=red>私人信息："+vo.getMsg()+"</font>");		//
 			try {
 				to_session.getBasicRemote().sendText(message.toJson());		//给单个人发
@@ -126,7 +138,10 @@ public class GroupChatSocket {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+			msg=username+"("+useraccount+")"+"："+date+"<font color=red>私人信息："+vo.getMsg()+"</font>"+"\r\n";	
+			//存储到数据库
+			 aw.recordGroup(id,groupId, msg);		//以私聊信息形式存到聊天记录		
+		}	
 	}
 	
 	

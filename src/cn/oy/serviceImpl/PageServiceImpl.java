@@ -2,14 +2,14 @@ package cn.oy.serviceImpl;
 
 import java.util.List;
 
-import cn.oy.dao.ChatDao;
-import cn.oy.daoImpl.ChatDaoImpl;
+import cn.oy.dao.ChatMsgDao;
+import cn.oy.daoImpl.ChatMsgDaoImpl;
 import cn.oy.pojo.Page;
 import cn.oy.service.PageService;
 
 public class PageServiceImpl implements PageService {
 
-	ChatDao cd=new ChatDaoImpl();
+	ChatMsgDao cd=new ChatMsgDaoImpl();
 	/**
 	 * 查询某一页聊天记录
 	 */

@@ -5,9 +5,11 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
-import cn.oy.dao.ChatDao;
+import cn.oy.dao.ChatMsgDao;
+import cn.oy.dao.GroupChatMsgDao;
 import cn.oy.dao.UserDao;
-import cn.oy.daoImpl.ChatDaoImpl;
+import cn.oy.daoImpl.ChatMsgDaoImpl;
+import cn.oy.daoImpl.GroupChatMsgDaoImpl;
 import cn.oy.daoImpl.ImplD;
 import cn.oy.service.LoginService;
 import cn.oy.service.FindPwdService;
@@ -53,10 +55,12 @@ public class MapIoc {
 		MAP.put("uis", uis);
 		AllWay aw=new AllWay();
 		MAP.put("aw", aw);
-		ChatDao cd=new ChatDaoImpl();
+		ChatMsgDao cd=new ChatMsgDaoImpl();
 		MAP.put("cd", cd);
 		GroupChatService gcs=new GroupChatServiceImpl();
 		MAP.put("gcs", gcs);
+		GroupChatMsgDao gcm=new GroupChatMsgDaoImpl();
+		MAP.put("gcm", gcm);
 		
 	}
 }
