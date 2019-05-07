@@ -70,6 +70,7 @@
 		 }else{		
 			 //否则进行私聊，下面得到私聊的用户，通过json进行传值
 			 var to=$("#userList :checked").val();   //发送给选中的人，进行私聊，可以选中多个
+			 alert(to);
 			obj={			
 			 	to:who,
    				msg: val,
@@ -97,7 +98,7 @@
 					var obj={					//json对象
 							to:u,
 			   				msg: val,
-			   				type:2  //1 广播  2 私聊
+			   				type:2 
 					   		} 
 					 var str=JSON.stringify(obj);
 			   		ws.send(str);		

@@ -12,11 +12,12 @@
 	var account='${sessionScope.user.account}';
 	var currentPage='${sessionScope.page.currentPage}';
 	var totalPage='${sessionScope.page.totalPage}';
+	var fid=window.location.href.split("?")[1].split("=")[1];
 	  var who='${sessionScope.fid}'; 
 	  //alert(who); 
 	//加双引号（单引号）是因为${sessionScope.username}是字符串，不加会当成是变量
 	var ws;		//一个ws对象就是一个通信管道
-	var target="ws://localhost:8888/1webchat/ochat?account="+account;	//url
+	var target="ws://localhost:8888/1webchat/ochat?account="+account+"&fid="+fid;	//url
 	window.onload=function(){
 		//进入聊天页面，就打开socket通道
 				
@@ -40,7 +41,6 @@
 				  $("#userList").html("");		//将内容清空,如不执行一个用户退出再进来会显示两次名字
  					$(msg.ids).each(function(i,v){		//遍历到第i个，v为第i个的值
  					 $("#userList").append("<input type=hidden   value='"+msg.ids[i]+"'/>"+msg.usernames[i]+"("+msg.accounts[i]+")"+		
-					 "<input type=button  onclick='Add("+v+")' value='添加好友'>"+
 					 "<input type=button  onclick='See("+v+")' value='查看信息'>"	+	 
 							  "<br/>")		//this，遍历到的当前对象
 				  });
@@ -58,30 +58,6 @@
 
 	}
 	
-	 
-	function Add(u){			//添加好友
-		var flag=window.confirm("是否添加对方为好友");
-		if(flag){
-		$.ajax({
-			method:'post',
-			url:'${pageContext.request.contextPath}/FriendServlet',
-			async:true,		//异步
-			data:{"fid":u,"uid":uid,"ch":"1","group":"我的好友"},
-				
-			success:function(result){
-				if(result=="true"){
-					alert("添加成功");
-				}else if(result=="self"){
-					alert("不能添加自己为好友");
-				}
-				else if(result=="false")
-					alert("添加失败");
-				else
-					alert("你们已经是好友");
-			}			
-		});
-		}
-	}
 	
 	function See(u){			//查看好友信息
 		$.ajax({
@@ -106,10 +82,10 @@
 		  var obj="";
 			
 			 //进行私聊，下面得到私聊的用户，通过json进行传值
-			  var to=who;   //发送给选中的人，进行私聊
 			obj={			
-			 	to:to,
+			 	to:fid,
    				msg: val,
+   				type:2
 		   		} 
 		 
 		 var str=JSON.stringify(obj);	//将对象转换成json字符串
@@ -131,7 +107,7 @@
 				url:'${pageContext.request.contextPath}/PageServlet',
 				async:true,		//异步
 				data:{
-					"xid":who,
+					"xid":fid,
 					"uid":uid,
 					"currentPage":currentPage,
 					"way":1

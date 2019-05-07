@@ -8,7 +8,7 @@
 <title>用户界面</title>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
-
+		var iden='${sessionScope.user.iden}';
 		var uid='${sessionScope.user.id}';
 		var name='${sessionScope.user.name}';
 		function Get(gname){						//显示该列表下的好友
@@ -38,7 +38,7 @@
 			});
 		}			
 		function Chat(fid){					//与好友私聊
-				window.location.href="${pageContext.request.contextPath}/ChatServlet?fid="+fid; 												
+				window.location.href="${pageContext.request.contextPath}/chat/oneChat.jsp?fid="+fid; 
 			}
 		function Del(u){				//删除好友
 			var flag=window.confirm("是否删除好友？？？");
@@ -117,6 +117,10 @@
 		{
 		alert("分组名不能为空");
 		return;
+		}
+		if(groupName=='我的好友'){
+			alert("请勿修改为默认分组名");
+			return;
 		}
 		$.ajax({
 			method:'post',
@@ -295,11 +299,10 @@
 	<h3>找群：</h3>
 	<input id="find">
 	<button onclick="Search()">点击查找</button>
-	<div  style="width: 400px; height: 150px; overflow: scroll; border: 1px solid;" 
+	<div  style="width: 400px; height: 100px; overflow: scroll; border: 1px solid;" 
         id="groupChat"></div><br/><br/>
-	<div>
-	
-	
+	<div>   
+		
 	
 	<input id="create"><button onclick="Create()">创建分组</button>
 	<h2>好友列表：</h2>
@@ -307,8 +310,8 @@
 		<br/><input type="button" onclick="Get('${group.name }')" id="" value="${group.name }"><font color=red>(点击查看该分组下的好友)</font>
 		<input id="${group.name }"><button onclick="MoGroup('${group.name }')">修改分组名</button>
 		<button onclick="DeleteGroup('${group.name }')">删除分组</button>
-		<div  style="width: 400px; height: 150px; overflow: scroll; border: 1px solid;" 
-        id='friend${group.name }'></div>
+		<div  style="width: 400px; height: 100px; overflow: scroll; border: 1px solid;" 
+        id='friend${group.name }'></div>   
 	</c:forEach>
 		
 	

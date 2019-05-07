@@ -2,12 +2,14 @@ package cn.oy.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import cn.oy.pojo.User;
 import cn.oy.service.FriendService;
 import cn.oy.service.GroupChatService;
@@ -46,10 +48,14 @@ public class LoginServlet extends HttpServlet {
 			}
 		return;
 		}
+		Map<Integer,String> map=(Map<Integer, String>) new HashMap<Integer, String>();
 		String account=req.getParameter("account");
 		String pwd=req.getParameter("pwd");
 		User u=ls.checkLogin(account, pwd);
 		if(u!=null) {
+			int uid=u.getId();
+			map.put(uid, req.getSession().getId());
+			req.getServletContext().setAttribute("map", map);
 			out.print("yes");
 			u.setGroups(fs.groupsService(u.getId()));		//得到用户好友列表菜单
 			u.setGroupChats(gcs.getGroupChat(u.getId()));	//得到用户加入的群
