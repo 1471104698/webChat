@@ -18,6 +18,32 @@ public class Message {
 	
 	private List<String> accounts;
 	
+	private String notice;
+	
+	private String intro;
+	
+	
+	
+	public String getNotice() {
+		return notice;
+	}
+
+
+	public void setNotice(String notice) {
+		this.notice = notice;
+	}
+
+
+	public String getIntro() {
+		return intro;
+	}
+
+
+	public void setIntro(String intro) {
+		this.intro = intro;
+	}
+
+
 	public List<String> getAccounts() {
 		return accounts;
 	}

@@ -10,7 +10,6 @@
 	var username='${sessionScope.user.name}';
 	var uid='${sessionScope.user.id}';
 	var account='${sessionScope.user.account}';
-	var currentPage='${sessionScope.page.currentPage}';
 	var totalPage='${sessionScope.page.totalPage}';
 	var fid=window.location.href.split("?")[1].split("=")[1];
 	  var who='${sessionScope.fid}'; 
@@ -94,6 +93,7 @@
    	}	
 
 	 function SeeData(data){		//查看聊天记录
+		 //alert(data);
 		 if('start'==data)
 			 currentPage=1;
 		 if('-1'==data&&currentPage>1)
@@ -147,7 +147,7 @@
 	float:left">
 	</div>
 	
-	<button onclick="SeeData()">点击查看消息记录</button><br/>
+	<button onclick="SeeData('start')">点击查看消息记录</button><br/>
 	<span><button onclick="SeeData('start')">首页</button></span>
 	<span><button onclick="SeeData('-1')">上一页</button></span>
 	<span><button onclick="SeeData('+1')">下一页</button></span>

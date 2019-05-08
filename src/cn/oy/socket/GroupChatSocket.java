@@ -15,14 +15,16 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import com.google.gson.Gson;
 import cn.oy.dao.ChatMsgDao;
+import cn.oy.pojo.GroupChat;
 import cn.oy.pojo.User;
+import cn.oy.service.GroupChatService;
 import cn.oy.vo.ContentVo;
 import cn.oy.vo.Message;
 import cn.oy.way.AllWay;
 
 @ServerEndpoint("/gchat")
 public class GroupChatSocket {
-
+	GroupChatService gcs=(GroupChatService) util.MapIoc.MAP.get("gcs");
 	AllWay aw=(AllWay) util.MapIoc.MAP.get("aw");
 	ChatMsgDao cd=(ChatMsgDao) util.MapIoc.MAP.get("cd");
 	User user=null;
@@ -82,6 +84,8 @@ public class GroupChatSocket {
 		message.setUsernames(names);
 		message.setIds(ids);
 		message.setAccounts(accounts);
+		GroupChat groupChat=gcs.isExistById(groupId);//得到群 的相关信息
+		message.setNotice(groupChat.getNotice());
 		broadcast(sessions,message.toJson()); 
 		}
 	
@@ -133,18 +137,21 @@ public class GroupChatSocket {
 		//存储到数据库的信息和时间	
 		String date=new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss").format(new Date())+"\r\n";
 		
+		msg=aw.replace(vo.getMsg());
+		message.setContent(username, msg);	
+		
 		int type=vo.getType();		//消息类型
 		if(type==1) {		//广播，相当于群发
-			message.setContent(username, vo.getMsg());	
-			
+		
 			sessions = sessionMap.get(groupId);
 			broadcast(sessions, message.toJson());
-			msg=username+"("+useraccount+")"+"："+date+vo.getMsg()+"\r\n";
+			msg=username+"("+useraccount+")"+"："+date+msg+"\r\n";
 
 			//存储到数据库
 			 aw.recordGroup(groupId, msg);
 			
 		}else {
+			
 			
 		}	
 	}

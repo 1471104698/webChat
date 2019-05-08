@@ -7,7 +7,6 @@
 <title>Insert title here</title>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
-	var username='${sessionScope.user.name}';
 	var uid='${sessionScope.user.id}';
 	var account='${sessionScope.user.account}';
 	var currentPage='${sessionScope.page.currentPage}';
@@ -46,6 +45,10 @@
 				  });
 
 			  }
+			  if(undefined!=msg.notice){
+				  $("#userList").html("");
+				  $("#announcement").append(msg.notice);
+			  }
 			  if(undefined!=content){
 				  $("#content").append(msg.content);			//将发送的消息显示在下面的id为content的框中
 			  }
@@ -59,6 +62,9 @@
 	
 	 function subSend(){			//发送信息
 		 var val=$("#msg").val();//得到用户聊天的信息--发出
+		 if(val==""){
+			 return;
+		 }
 		 var u=$("#userList :checked");			//ps:要加个空格，不然取不到值。。。
 	/* 	  console.info(u.length);  */
 		  var obj="";
@@ -164,35 +170,9 @@
 		});
 	}
 	
-	function SeeData(data){		//查看聊天记录
-		 if('start'==data)
-			 currentPage=1;
-		 if('-1'==data&&currentPage>1)
-			 currentPage--;
-		 if('+1'==data&&currentPage<totalPage)
-			 currentPage++;
-		 if('finally'==data)
-			 currentPage=totalPage;
-		 $.ajax({
-				method:'post',
-				url:'${pageContext.request.contextPath}/PageServlet',
-				async:true,		//异步
-				data:{"fid":who,"uid":uid,"currentPage":currentPage},
-				success:function(data){
-					//alert(data);
-					var majorList=eval("("+data+")");
-					 if(undefined!=majorList)
-					 {
-						 $("#recordArea").html("");
-						 $.each(majorList, function (i, v){
-							 $("#recordArea").append(v+"<br/>");
-						 });
-					 }
-				}
-			});
-	 }
 	
 	 function SeeData(data){		//查看聊天记录
+		 //alert(data);
 		 if('start'==data)
 			 currentPage=1;
 		 if('-1'==data&&currentPage>1)
@@ -232,7 +212,10 @@
 	<h1>Web聊天室</h1>
 	<hr>
 	
-	<div id="announcement" style="border:1px solid black; width:1500px;height:80px;"></div>
+	<div id="announcement" style="border:1px solid black; width:1500px;height:200px;overflow: scroll;">
+	<div><h2  style="text-align:center">群公告:</h2></div>
+	
+	</div>
 	<div style="border:1px solid black; width:600px;height:580px;
 	float:left;">
 	<div
@@ -249,7 +232,7 @@
 	float:left">
 	</div>
 	
-	<button onclick="SeeData()">点击查看消息记录</button><br/>
+	<button onclick="SeeData('start')">点击查看消息记录</button><br/>
 	<span><button onclick="SeeData('start')">首页</button></span>
 	<span><button onclick="SeeData('-1')">上一页</button></span>
 	<span><button onclick="SeeData('+1')">下一页</button></span>

@@ -202,7 +202,10 @@
 				//alert(data);
 				 $("#groupChat").html("");			//清空
 				$.each(groups, function (i, v) {
-					$("#groupChat").append(v.name+"("+v.id+")"+"<input type=button onclick='Attend("+v.id+")'  value='加群'>"+"<br/>");		
+					$("#groupChat").append(v.name+"("+v.id+")"+"<input type=button onclick='Attend("+v.id+")'  value='加群'>"+
+							"<input type=button onclick='SeeGroupChat("+v.id+")' value='查看群信息'>"+
+							"<br/>"
+					);			
 				});	
 			}
 		});	
@@ -228,6 +231,13 @@
 			}); 
 		}
 	}
+	
+	function SeeGroupChat(data){
+		alert(data);
+		window.location.href="${pageContext.request.contextPath }?"; 
+	}
+	
+	
 	function OutGroupChat(data){		//退群,此处值为群id
 		var flag=window.confirm("确定退群？？？");
 		if(flag){
@@ -284,13 +294,15 @@
 	   <br/>	
 	<h2>我加入的群聊：</h2>
 	<c:forEach items="${user.groupChats }" var="groupChat">
+	${groupChat.adminId}
 	${groupChat.name }(${groupChat.id })
-	<c:if test="${not empty groupChat.name}">			<!-- 不为空则显示 -->
 	<button onclick="Join('${groupChat.id }')">进入群聊</button>
 	<button onclick="OutGroupChat('${groupChat.id }')">退群</button><br/>
-	</c:if>
 	</c:forEach>
 	<br/>
+
+	<a href="${pageContext.request.contextPath}/PageServlet?way=3">查看所有群</a>
+
 	<h3>创建群聊：</h3>
 	输入群名称：
 	<input id="createGroup"><button onclick="CreateGroup()">点击创建</button><br/>
@@ -313,6 +325,7 @@
 		<div  style="width: 400px; height: 100px; overflow: scroll; border: 1px solid;" 
         id='friend${group.name }'></div>   
 	</c:forEach>
+		
 		
 	
   </div>
