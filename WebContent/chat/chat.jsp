@@ -9,9 +9,9 @@
 <script type="text/javascript">
 	var uid='${sessionScope.user.id}';
 	var account='${sessionScope.user.account}';
-	var currentPage='${sessionScope.page.currentPage}';
-	var totalPage='${sessionScope.page.totalPage}';
 	var groupId=window.location.href.split("?")[1].split("=")[1];		//页面跳转带参接收
+	 var currentPage='${sessionScope.page.currentPage}';
+	 var count=0;
 	//alert(groupId);
 	//加双引号（单引号）是因为${sessionScope.username}是字符串，不加会当成是变量
 	var ws;		//一个ws对象就是一个通信管道,在外面是全局变量
@@ -155,24 +155,25 @@
 		}
 	}	
 	function See(u){			//查看好友信息
-		$.ajax({
-			method:'post',
-			url:'${pageContext.request.contextPath}/FriendServlet',
-			async:true,		//异步
-			data:{"fid":u,"uid":uid,"ch":"3"},
-				
-			success:function(result){
-				if(result=="true")
-				window.location.href="${pageContext.request.contextPath}/features/information.jsp"
-				else
-					alert("用户不存在");
-			}			
-		});
+		window.location.href="${pageContext.request.contextPath}/FriendServlet?fid="+u+"&uid="+uid+"&ch="+3;
 	}
 	
 	
-	 function SeeData(data){		//查看聊天记录
+ 	 (function Refresh(){		//自动执行将聊天记录显示
+		setTimeout("SeeData()",0);
+	}()
+	)  
+
+	
+	
+	 function SeeData(data){		//查看聊天记录,自动执行
+		 var totalPage='${sessionScope.page.totalPage}';
+		 //alert(totalPage);
 		 //alert(data);
+		 if(count==0){				//每次进页面都重置当前页数
+			 currentPage=1;
+			 count++;
+		 }
 		 if('start'==data)
 			 currentPage=1;
 		 if('-1'==data&&currentPage>1)
@@ -181,6 +182,7 @@
 			 currentPage++;
 		 if('finally'==data)
 			 currentPage=totalPage;
+		 
 		 $.ajax({
 				method:'post',
 				url:'${pageContext.request.contextPath}/PageServlet',
@@ -192,7 +194,6 @@
 					"way":2	
 				},
 				success:function(data){
-					//alert(data);
 					var majorList=eval("("+data+")");
 					 if(undefined!=majorList)
 					 {
@@ -203,7 +204,9 @@
 					 }
 				}
 			});
+		 
 	 }
+	 
 
 </script>
 </head>
@@ -232,7 +235,6 @@
 	float:left">
 	</div>
 	
-	<button onclick="SeeData('start')">点击查看消息记录</button><br/>
 	<span><button onclick="SeeData('start')">首页</button></span>
 	<span><button onclick="SeeData('-1')">上一页</button></span>
 	<span><button onclick="SeeData('+1')">下一页</button></span>

@@ -22,13 +22,17 @@ public class PageServiceImpl implements PageService {
 	int currentPage=-1;
 	int totalCount=-1;
 	ChatMsgDao cd=null;
+	int pageSize=-1;
 	GroupChatMsgDao gcmd=null;
+	
+	
 	//查询某一页聊天记录
 	@Override
 	public Page queryDateService(String current, Integer uid, Integer xid,Integer way) {
 		cd=new ChatMsgDaoImpl();
 		gcmd=new GroupChatMsgDaoImpl();
 		List<String> data=null;
+		pageSize=40;
 		if(null==current||""==current) {
 			currentPage=1;
 		}else {
@@ -36,13 +40,13 @@ public class PageServiceImpl implements PageService {
 		}
 		if(way==1) {
 			totalCount=cd.totalSize(uid, xid);
-			data=cd.pageData(currentPage, 40, uid, xid);
-		}else if(way==2){
+			data=cd.pageData(currentPage, pageSize, uid, xid);
+		}else{
 			totalCount=gcmd.totalSize(xid);
-			data=gcmd.pageData(currentPage, 40, xid);
+			data=gcmd.pageData(currentPage, pageSize, xid);
 		}
 		if(null!=data)
-		page=new Page(currentPage, 20, totalCount, data);
+		page=new Page(currentPage, pageSize, totalCount, data);
 		
 		return page;
 	}
@@ -70,7 +74,7 @@ public class PageServiceImpl implements PageService {
 				}
 				totalCount=gcd.totalSizeDao(groupId, way);
 				users = gcd.getUserDao(currentPage,pageSize,groupId);
-				page=new Page(currentPage, pageSize, totalCount, null, users, null);
+				page=new Page(currentPage, pageSize, totalCount, null, users);
 				return page;
 
 		}
@@ -92,7 +96,7 @@ public class PageServiceImpl implements PageService {
 				groups=gcd.getGroupChatsDao(currentPage, pageSize);
 				System.out.println("groups="+groups);
 				System.out.println("currentPage="+currentPage);
-				page=new Page(currentPage, pageSize, totalCount, groups, null, null);
+				page=new Page(currentPage, pageSize, totalCount, groups, null);
 				System.out.println("totalPage="+page.getTotalPage());
 			
 			return page;

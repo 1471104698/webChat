@@ -37,6 +37,7 @@ public class FriendServlet extends HttpServlet {
 		PrintWriter out =resp.getWriter();
 		int fid;
 		int uid;
+		User user=null;
 		/**
 		 * 对好友列表的操作
 		 */
@@ -44,13 +45,12 @@ public class FriendServlet extends HttpServlet {
 		if(gname!=null) {		//不为空执行以下步骤
 			int gh=Integer.parseInt(req.getParameter("gh"));
 			if(gh==1||gh==2||gh==3) {
-				User user=(User) req.getSession().getAttribute("user");		//得到当前用户
+				user=(User) req.getSession().getAttribute("user");		//得到当前用户
 				List<Group> groups=user.getGroups();
 				uid=Integer.parseInt(req.getParameter("uid"));
 				if(gh==1) {											//修改好友分组名称
 				String oldgname=req.getParameter("oldgname");
 				result=fs.moGroupName(gname, uid, oldgname,groups);
-				System.out.println("result="+result);
 			}else if(gh==2){										//创建分组
 				result=fs.createGroupName(gname, uid,groups);		
 			}else{													//删除分组
@@ -110,7 +110,6 @@ public class FriendServlet extends HttpServlet {
 		out.print("no");
 		}
 		}else if(ch==3){											//查看信息
-			User user=null;
 			if(fid==uid) {
 				AllWay aw=(AllWay) util.MapIoc.MAP.get("aw");
 				user=aw.getUserByID(uid);
@@ -119,11 +118,8 @@ public class FriendServlet extends HttpServlet {
 			user=fs.SeeFriendService(fid,uid);
 			if(user!=null) {
 				req.getSession().setAttribute("friend", user);			
-				out.print("true");
-			}else {
-				out.print("false");
-			}
-			
+				resp.sendRedirect("features/information.jsp");
+			}		
 		}else if(ch==4||ch==5){										
 			if(ch==4) {													//修改昵称
 			String nickName=req.getParameter("nickName");

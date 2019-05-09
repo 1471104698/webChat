@@ -6,10 +6,10 @@
 <meta charset="UTF-8">
 <title>找回密码</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<script src='js/prefixfree.min.js'></script>
+<script src='${pageContext.request.contextPath}/js/prefixfree.min.js'></script>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/normalize.css" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/my.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-3.3.1.min.js"></script>
@@ -31,7 +31,6 @@
 				},
 			success:function(result){
 				if(result=="true"){
-					alert("验证成功！！！");	
 					window.location.href="${pageContext.request.contextPath}/features/updatePwd.jsp"; 
 				}else{
 					alert("信息填写错误！！！");

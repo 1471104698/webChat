@@ -62,19 +62,7 @@
 			}
 		}
 		function See(u){				//查看好友信息
-			$.ajax({
-				method:'post',
-				url:'${pageContext.request.contextPath}/FriendServlet',
-				async:true,		//异步
-				data:{"fid":u,"uid":uid,"ch":"3"},
-					
-				success:function(result){
-					if(result=="true")
-					window.location.href="${pageContext.request.contextPath}/features/information.jsp"
-					else
-						alert("用户不存在");
-				}			
-			});		
+			window.location.href="${pageContext.request.contextPath}/FriendServlet?fid="+u+"&uid="+uid+"&ch="+3
 		}		
 	
 	function MoGroup(oldGroupName){					//修改分组名
@@ -232,12 +220,6 @@
 		}
 	}
 	
-	function SeeGroupChat(data){
-		alert(data);
-		window.location.href="${pageContext.request.contextPath }?"; 
-	}
-	
-	
 	function OutGroupChat(data){		//退群,此处值为群id
 		var flag=window.confirm("确定退群？？？");
 		if(flag){
@@ -285,6 +267,7 @@
 </head>
 <body>
 
+	<c:if test="${sessionScope.user.iden eq 0 }">
 	<h1>用户界面</h1>
 	<hr/>
 	<h3>用户名：${sessionScope.user.name}</h3>
@@ -300,8 +283,6 @@
 	<button onclick="OutGroupChat('${groupChat.id }')">退群</button><br/>
 	</c:forEach>
 	<br/>
-
-	<a href="${pageContext.request.contextPath}/PageServlet?way=3">查看所有群</a>
 
 	<h3>创建群聊：</h3>
 	输入群名称：
@@ -325,9 +306,15 @@
 		<div  style="width: 400px; height: 100px; overflow: scroll; border: 1px solid;" 
         id='friend${group.name }'></div>   
 	</c:forEach>
-		
-		
-	
   </div>
+  </c:if>
+  
+  <c:if test="${sessionScope.user.iden eq 1 }">
+	<h1>管理员界面--admin</h1>
+	<hr/>
+	<a href="${pageContext.request.contextPath}/PageServlet?way=3">查看所有群</a><br/>
+	<a href="${pageContext.request.contextPath}/PageServlet?way=4">查看所有用户</a><br/>
+	<div style="float:left;"> <span onclick="Out()">退出账号</span></div><br/><br/>
+  </c:if>
 </body>
 </html>

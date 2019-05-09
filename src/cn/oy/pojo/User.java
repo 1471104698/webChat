@@ -1,11 +1,11 @@
 package cn.oy.pojo;
 
+import java.io.File;
 import java.util.List;
 
 public class User {
 	private Integer id;
-	
-	private String name;
+	private String name;	
 	private String sex;
 	private String signature;
 	private String tel;
@@ -13,13 +13,34 @@ public class User {
 	private String iden;
 	private String pwd;
 	private String account;
-	private List<Group> groups;
-	private List<User> friends;
-	private String nickName;
-	private List<GroupChat> groupChats;
+	private List<Group> groups;			//好友分组
+	private List<User> friends;			//好友
+	private String nickName;			//群昵称
+	private List<GroupChat> groupChats;	//加入的群
+	private File pic;					//头像
 	public User() {
 	}
 	
+	public User(Integer id, String name, String sex, String signature, String tel, Integer age, String iden, String pwd,
+			String account, List<Group> groups, List<User> friends, String nickName, List<GroupChat> groupChats,
+			File pic) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.sex = sex;
+		this.signature = signature;
+		this.tel = tel;
+		this.age = age;
+		this.iden = iden;
+		this.pwd = pwd;
+		this.account = account;
+		this.groups = groups;
+		this.friends = friends;
+		this.nickName = nickName;
+		this.groupChats = groupChats;
+		this.pic = pic;
+	}
+
 	public User(String name, String sex, String signature, String tel, Integer age, String pwd, String account) {
 		super();
 		this.name = name;
@@ -50,6 +71,14 @@ public class User {
 
 
 
+
+	public File getPic() {
+		return pic;
+	}
+
+	public void setPic(File pic) {
+		this.pic = pic;
+	}
 
 	public List<GroupChat> getGroupChats() {
 		return groupChats;

@@ -10,10 +10,12 @@
 	var username='${sessionScope.user.name}';
 	var uid='${sessionScope.user.id}';
 	var account='${sessionScope.user.account}';
-	var totalPage='${sessionScope.page.totalPage}';
+	var currentPage='${sessionScope.page.currentPage}';
 	var fid=window.location.href.split("?")[1].split("=")[1];
 	  var who='${sessionScope.fid}'; 
 	  //alert(who); 
+	  alert(currentPage);
+	  alert(totalPage);
 	//加双引号（单引号）是因为${sessionScope.username}是字符串，不加会当成是变量
 	var ws;		//一个ws对象就是一个通信管道
 	var target="ws://localhost:8888/1webchat/ochat?account="+account+"&fid="+fid;	//url
@@ -93,6 +95,7 @@
    	}	
 
 	 function SeeData(data){		//查看聊天记录
+			var totalPage='${sessionScope.page.totalPage}';
 		 //alert(data);
 		 if('start'==data)
 			 currentPage=1;

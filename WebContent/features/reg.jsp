@@ -6,9 +6,9 @@
 <meta charset="UTF-8">
 <title>注册页面</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<script src='js/prefixfree.min.js'></script>
+<script src='${pageContext.request.contextPath}/js/prefixfree.min.js'></script>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
-<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/normalize.css" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/my.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-3.3.1.min.js"></script>
@@ -57,6 +57,34 @@
 		}
 		return false;
 	}
+	
+/* change 事件被<input>, <select>, 和<textarea> 元素触发。
+触发情况
+<input type="radio"> 和 <input type="checkbox"> 的默认选项被修改时（通过点击或者键盘事件）。
+ */
+/*  
+	$("#uploadFile").change(function(){
+		var formData = new FormData($('#uploadFile')[0]);		//得到表单属性
+		$.ajax({                        //发请求给接口
+            cache:false,
+            contentType: false,	 //很重要，指定为false才能形成正确的Content-Type
+            processData: false,	//很重要，告诉jquery不要对form进行处理
+            url:'/Pic',   
+            type:'POST',
+            enctype:'multipart/form-data',
+            data:formData,
+            dataType:'JSON',
+            success:function (data) {
+                if (data.data.imgs.length > 0) {
+                    //上存成功
+                    var url = data.data.imgs[0]["thumbnail_url"];
+                    $("#photo").attr("src", url);		//attr()可以用来修改或者添加属性或者属性值,这里用来修改
+                    updateHeadImg(url);
+                }
+            }
+        });
+	}); */
+	
 	</script>
 	
    <h1>注册界面</h1>		<hr/>
@@ -85,7 +113,15 @@
 				<li>&emsp;&emsp;&emsp;<input type=submit value="注册">
 			<input type="reset"><br></li>
 			</ul>	
-			
 		</form>
+		<form id="uploadFile">
+		 <ul><li>点击上传头像：<input type="file" name="file" id="uploadFileInput" style="display:none;"/></li></ul>
+		</form>
+		<%-- <ul>
+		<!-- 当这个人没有头像的时候，放一张提示用户上传的图片 -->
+		<li>点击上传头像：<br/><img id="photo" name="photo" src="${pageContext.request.contextPath }/images/default.png" width="130px" height="140px" onclick="$('#uploadFileInput').click();"/>
+		</li>
+		</ul> --%>
+		
 </body>
 </html>
