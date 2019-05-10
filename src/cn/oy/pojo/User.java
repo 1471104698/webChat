@@ -1,6 +1,5 @@
 package cn.oy.pojo;
 
-import java.io.File;
 import java.util.List;
 
 public class User {
@@ -17,13 +16,13 @@ public class User {
 	private List<User> friends;			//好友
 	private String nickName;			//群昵称
 	private List<GroupChat> groupChats;	//加入的群
-	private File pic;					//头像
+	private String pic;					//头像
 	public User() {
 	}
 	
 	public User(Integer id, String name, String sex, String signature, String tel, Integer age, String iden, String pwd,
 			String account, List<Group> groups, List<User> friends, String nickName, List<GroupChat> groupChats,
-			File pic) {
+			String pic) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -72,11 +71,11 @@ public class User {
 
 
 
-	public File getPic() {
+	public String getPic() {
 		return pic;
 	}
 
-	public void setPic(File pic) {
+	public void setPic(String pic) {
 		this.pic = pic;
 	}
 

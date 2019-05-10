@@ -83,7 +83,7 @@ function MoGroup(){
 	<table border="1">
 		<thead>
 		<tr>		<!-- tr是行 td是列 -->
-
+		<th>    </th>
 		<th>账号</th>
 		<th>姓名</th>	
 		<th>昵称</th>
@@ -95,6 +95,7 @@ function MoGroup(){
 		</thead>
 		<tbody>
 		<tr>
+		<td><img src="${pageContext.request.contextPath}/${friend.pic }" width="600px" height="60px"></td>
 		<td>${friend.account}</td>
 		<td>${friend.name}</td>
 		<td>${friend.nickName}</td>

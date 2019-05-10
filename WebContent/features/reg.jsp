@@ -36,13 +36,13 @@
 			async:true,		
 			dataType:'text',
 			data:{
-				"pwd":$("#pwd").val(),
-				"account":$("#account").val(),
-				"name":$("#name").val(),
-				"tel":$("#tel").val(),
-				"age":$("#age").val(),
-				"sex":$("#sex").val(),
-				"signature":$("#signature").val()
+				"pwd":pwd,
+				"account":account,
+				"name":name,
+				"tel":tel,
+				"age":age,
+				"sex":sex,
+				"signature":signature,
 				},
 			success:function(result){  
 					if(result=="false"){
@@ -57,33 +57,6 @@
 		}
 		return false;
 	}
-	
-/* change 事件被<input>, <select>, 和<textarea> 元素触发。
-触发情况
-<input type="radio"> 和 <input type="checkbox"> 的默认选项被修改时（通过点击或者键盘事件）。
- */
-/*  
-	$("#uploadFile").change(function(){
-		var formData = new FormData($('#uploadFile')[0]);		//得到表单属性
-		$.ajax({                        //发请求给接口
-            cache:false,
-            contentType: false,	 //很重要，指定为false才能形成正确的Content-Type
-            processData: false,	//很重要，告诉jquery不要对form进行处理
-            url:'/Pic',   
-            type:'POST',
-            enctype:'multipart/form-data',
-            data:formData,
-            dataType:'JSON',
-            success:function (data) {
-                if (data.data.imgs.length > 0) {
-                    //上存成功
-                    var url = data.data.imgs[0]["thumbnail_url"];
-                    $("#photo").attr("src", url);		//attr()可以用来修改或者添加属性或者属性值,这里用来修改
-                    updateHeadImg(url);
-                }
-            }
-        });
-	}); */
 	
 	</script>
 	
@@ -105,17 +78,14 @@
 				<li>姓名：&emsp;&emsp;<input type="text"placeholder="姓名" name="name"   id="name"  required onkeyup="this.value=this.value.replace(/(^\s+)|(\s+$)/g,'');"></li>
 				<li>手机号码：<input type="text" placeholder="手机号码" name="tel" id="tel" required onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></li>
 				<li>年龄：&emsp;&emsp;<input type="text" placeholder="年龄" name="age"  id="age" required onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></li>
-				<li>性别：<br/><input type="radio"  placeholder="性别" name="sex" id="sex"  value="1" checked="checked">男
-									  <input type="radio" name="sex"  id="sex" value="2" >女</li>
+				<li>性别：<br/><input type="radio"  placeholder="性别" name="sex" id="sex"  value="男" checked="checked">男
+									  <input type="radio" name="sex"  id="sex" value="女" >女</li>
 				
 				<li>个性签名：&emsp;&emsp;<br/><textarea cols="50" rows="5"  placeholder="个性签名" name="signature" id="signature"  required></textarea><br/></li>
-      
+
 				<li>&emsp;&emsp;&emsp;<input type=submit value="注册">
 			<input type="reset"><br></li>
 			</ul>	
-		</form>
-		<form id="uploadFile">
-		 <ul><li>点击上传头像：<input type="file" name="file" id="uploadFileInput" style="display:none;"/></li></ul>
 		</form>
 		<%-- <ul>
 		<!-- 当这个人没有头像的时候，放一张提示用户上传的图片 -->

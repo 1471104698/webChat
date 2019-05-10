@@ -37,7 +37,8 @@
 			  if(undefined!=msg.usernames){		//未定义的值和定义未赋值的为undefined，null是一种特殊的object,NaN是一种特殊的number
 				  $("#userList").html("");		//将内容清空,如不执行一个用户退出再进来会显示两次名字
  					$(msg.ids).each(function(i,v){		//遍历到第i个，v为第i个的值			  
-					  $("#userList").append("<input type=checkbox   value='"+msg.ids[i]+"'/>"+msg.usernames[i]+" "+
+					  $("#userList").append("<img src='../"+msg.picPaths[i]+"' width='"+50+"px"+"' height='"+50+"px'>"+
+							  "<input type=checkbox   value='"+msg.ids[i]+"'/>"+msg.usernames[i]+" "+
 					 "<input type=button  onclick='Add("+v+")' value='添加好友'>"+
 					 "<input type=button  onclick='Del("+v+")' value='删除好友'>"+
 					 "<input type=button  onclick='See("+v+")' value='查看信息'>"	+	 

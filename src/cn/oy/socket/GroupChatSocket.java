@@ -32,14 +32,18 @@ public class GroupChatSocket {
 	private String account;
 	private Integer uid;
 	private Integer groupId;
+	private String picPath;
 	private static Integer webCount=0;
 	
 	private static Map<Integer,String> iaMap=new HashMap<>();			//通过用户id找账户
+	private static Map<Integer,String> ipMap=new HashMap<>();			//通过用户id找头像
 	
-	private static Map<Integer,List<Session>> sessionMap=new HashMap<>();	//存储群Map的Map集合
-	private static Map<Integer,List<Integer>> idMap=new HashMap<>();	//存储群Map的Map集合
-	private static Map<Integer,List<String>> nameMap=new HashMap<>();	//存储群Map的Map集合
+	private static Map<Integer,List<String>> picPathMap=new HashMap<>();		//存储头像的Map集合
+	private static Map<Integer,List<Session>> sessionMap=new HashMap<>();	//存储session的Map集合
+	private static Map<Integer,List<Integer>> idMap=new HashMap<>();	//存储id的Map集合
+	private static Map<Integer,List<String>> nameMap=new HashMap<>();	//存储name的Map集合
 	
+	private static List<String>	picPaths=null;			//将用户名存储起来，用于广播
 	private static List<Session> sessions=null;		//将session对象存储起来,一个群一个new，用于广播
 	private static List<String>	names=null;			//将用户名存储起来，用于广播
 	private static List<Integer> ids=null;			//将用户id存储起来，用于广播
@@ -55,20 +59,30 @@ public class GroupChatSocket {
 		groupId=Integer.parseInt(queryString.split("=")[2]);
 		this.user=aw.getUserByAccount(account);
 		uid=user.getId();
+		user=aw.getUserByID(uid);
 		username=user.getName();
+		picPath=user.getPic();
+		
+		System.out.println("picPathpicPathpicPath="+picPath);
 
 		if(null==sessionMap.get(groupId)) {				//如果Map中不存在此群号的对应的用户session集合，则进行创建,顺便创建相应的用户id和名称集合,再存入Map
 			sessions=new ArrayList<Session>();
 			names=new ArrayList<String>();
 			ids=new ArrayList<Integer>();	
-			
-		}else {
+			picPaths=new ArrayList<String>();
+		}
+		else {
 			sessions=sessionMap.get(groupId);			//不为空则得到用户session集合
 		}
+		
+		
 		accounts.add(account);
 		names.add(username);
 		ids.add(uid);
+		picPaths.add(picPath);
 		sessions.add(session);
+		
+		picPathMap.put(groupId, picPaths);
 		sessionMap.put(groupId, sessions);			//	将群id和对应用户的session集合进行绑定
 		idMap.put(groupId, ids);					//	将群id和对应用户的id集合进行绑定
 		nameMap.put(groupId, names);				//	将群id和对应用户的用户名name集合进行绑定	
@@ -77,6 +91,8 @@ public class GroupChatSocket {
 		addWebCount();
 		
 		iaMap.put(uid, account);					//将每一个用户的id和账号进行绑定，便于后续广播通知显示账号
+		ipMap.put(uid, picPath);
+		
 		String msg="欢迎"+username+"进入聊天室!!!<br/>";
 		
 		Message message=new Message();
@@ -84,8 +100,10 @@ public class GroupChatSocket {
 		message.setUsernames(names);
 		message.setIds(ids);
 		message.setAccounts(accounts);
+		message.setPicPaths(picPaths);
 		GroupChat groupChat=gcs.isExistById(groupId);//得到群 的相关信息
 		message.setNotice(groupChat.getNotice());
+		
 		broadcast(sessions,message.toJson()); 
 		}
 	
@@ -106,18 +124,21 @@ public class GroupChatSocket {
 		sessions = sessionMap.get(groupId);
 		names = nameMap.get(groupId);
 		ids = idMap.get(groupId);
-		System.out.println(names);
+		picPaths=picPathMap.get(groupId);
 		
+		picPaths.remove(picPath);
 		sessions.remove(session);
 		names.remove(username);
-		System.out.println(names);
 		ids.remove(uid);
+		
 		String msg="欢送"+username+"离开聊天室!!!<br/>";
+		
 		Message message=new Message();
 		message.setWelcome(msg);
 		message.setIds(ids);
 		message.setAccounts(accounts);
 		message.setUsernames(names);
+		message.setPicPaths(picPaths);
 		broadcast(sessions, message.toJson());		//播放给所有已存储的session对象
 	}
 	
@@ -133,12 +154,14 @@ public class GroupChatSocket {
 		String msg="";
 		ContentVo vo=gson.fromJson(json, ContentVo.class);
 		String useraccount=iaMap.get(uid);			//通过id找到账户
+		String userpic=ipMap.get(uid);					
+		
 		Message message=new Message();	
 		//存储到数据库的信息和时间	
 		String date=new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss").format(new Date())+"\r\n";
 		
 		msg=aw.replace(vo.getMsg());
-		message.setContent(username, msg);	
+		message.setContent(username, msg,userpic);	
 		
 		int type=vo.getType();		//消息类型
 		if(type==1) {		//广播，相当于群发

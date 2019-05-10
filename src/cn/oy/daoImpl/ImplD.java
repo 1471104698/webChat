@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import cn.oy.dao.UserDao;
 import cn.oy.pojo.Group;
 import cn.oy.pojo.User;
@@ -66,6 +65,8 @@ public class ImplD implements UserDao {
 		return u;
 	}
 	
+	
+	
 	//通过账户查询用户是否为空
 	public User isEmpty(String account) {
 		try {
@@ -110,14 +111,16 @@ public class ImplD implements UserDao {
 			try {
 				con=du.getCon();
 				//创建Sql命令
-				String sql="select *from users where uid =?";	// 
+				String sql="select *from users u,user_pic up where u.uid =? and up.uid=?";	// 
 				//创建Sql命令对象
 				psta=(PreparedStatement) con.prepareStatement(sql);
 				//给占位符赋值
 				psta.setInt(1, id);
+				psta.setInt(2, id);
 				rs=psta.executeQuery();
 				if(rs.next()) {   //只有一个，因此不需要用while，用if 	
 					u=new User();
+					u.setPic(rs.getString("picPath"));
 					u.setAccount(rs.getString("account"));
 					u.setId(rs.getInt("uid"));
 					u.setName(rs.getString("true_name"));
@@ -145,7 +148,6 @@ public class ImplD implements UserDao {
 			return u;
 		}
 		
-
 	//用户注册
 	@Override
 	public int regDao(User user) {
@@ -637,12 +639,14 @@ public class ImplD implements UserDao {
 				e3.printStackTrace();
 			}
 		}
+		
 		return result;
 	}
 
-	
 
-	
+
+
+
 
 	
 	

@@ -1,6 +1,5 @@
 package cn.oy.servlet;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -30,6 +29,9 @@ public class RegServlet extends HttpServlet {
 		FriendService fs=(FriendService) util.MapIoc.MAP.get("fs");
 		RegService rs=(RegService) util.MapIoc.MAP.get("rs");
 		AllWay aw=(AllWay) util.MapIoc.MAP.get("aw");
+		int result=-1;
+		
+	    	    
 		String account=req.getParameter("account");
 		String name=req.getParameter("name");
 		String pwd=req.getParameter("pwd");
@@ -39,7 +41,7 @@ public class RegServlet extends HttpServlet {
 		String tel=req.getParameter("tel");	
 		User user=new User(name, sex, signature, tel, age, "0", pwd, account);
 		PrintWriter out =resp.getWriter();
-		int result=rs.regService(user);
+		result=rs.regService(user);
 		if(result>0) {
 			user=aw.getUserByAccount(account);
 			fs.createGroupName("我的好友", user.getId(),null);			//创建一个默认好友分组列表
@@ -48,8 +50,7 @@ public class RegServlet extends HttpServlet {
 			out.print("false");
 		}
 		out.flush();
-		out.close();
+//		out.close();
 		
     }
-
 }

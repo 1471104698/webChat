@@ -23,12 +23,13 @@
 					 $("#"+"friend"+gname).html("");			//清空
 					$.each(majorList, function (i, v) {
 						if(v.nickName!=""&&v.nickName!=null){
-							$("#"+"friend"+gname).append(v.nickName+"");	
+							$("#"+"friend"+gname).append("<img src='../"+v.pic+"' width='"+30+"px"+"' height='"+30+"px'>"+""+v.nickName+"");	
 						}else{
-							$("#"+"friend"+gname).append(v.name+"");	
+							$("#"+"friend"+gname).append("<img src='../"+v.pic+"' width='"+30+"px"+"' height='"+30+"px'>"+""+v.name+"");	
 						}
 
-						$("#"+"friend"+gname).append("<input type=button onclick='Chat("+v.id+")'  value='私聊'>"+" "+
+						$("#"+"friend"+gname).append(
+								"<input type=button onclick='Chat("+v.id+")'  value='私聊'>"+" "+
 								 "<input type=button  onclick='Del("+v.id+")' value='删除好友'>"+
 								"<input type=button onclick='See("+v.id+")'  value='查看信息'>"+
 								"<br/>"							
@@ -262,6 +263,14 @@
 		}); 
 		}
 	}
+	
+	function upload(){
+		var fileName=$("#file").val();
+		if(null==fileName)
+		return false;
+		else
+		return true;
+	}
 		
 </script>
 </head>
@@ -270,14 +279,21 @@
 	<c:if test="${sessionScope.user.iden eq 0 }">
 	<h1>用户界面</h1>
 	<hr/>
-	<h3>用户名：${sessionScope.user.name}</h3>
+	<h3>用户名：${sessionScope.user.name}</h3>		
+	
+	<img src="${pageContext.request.contextPath}/${user.pic }" width="100px" height="100px">
+	<form action="${pageContext.request.contextPath}/PicServlet" enctype="multipart/form-data" onsubmit="return upload()">
+	<input type="file" id="file" value="选择头像"  value="upload/male.png">
+	<input type="submit" value="点击上传">
+	</form>
+	<br/>
+	
 	<a href="${pageContext.request.contextPath}/features/updateInfo.jsp">修改个人信息</a><br/>
 	<a href="${pageContext.request.contextPath}/features/updatePwd.jsp">修改密码</a><br/><br/><br/>
 	   <div style="float:left;"> <span onclick="Out()">退出账号</span></div><br/><br/>
 	   <br/>	
 	<h2>我加入的群聊：</h2>
 	<c:forEach items="${user.groupChats }" var="groupChat">
-	${groupChat.adminId}
 	${groupChat.name }(${groupChat.id })
 	<button onclick="Join('${groupChat.id }')">进入群聊</button>
 	<button onclick="OutGroupChat('${groupChat.id }')">退群</button><br/>
@@ -295,7 +311,8 @@
 	<div  style="width: 400px; height: 100px; overflow: scroll; border: 1px solid;" 
         id="groupChat"></div><br/><br/>
 	<div>   
-		
+	
+	
 	
 	<input id="create"><button onclick="Create()">创建分组</button>
 	<h2>好友列表：</h2>
@@ -310,8 +327,9 @@
   </c:if>
   
   <c:if test="${sessionScope.user.iden eq 1 }">
-	<h1>管理员界面--admin</h1>
+	<h1>管理员界面</h1>
 	<hr/>
+	<img src="${pageContext.request.contextPath}/${user.pic }" width="100px" height="100px"><br/>
 	<a href="${pageContext.request.contextPath}/PageServlet?way=3">查看所有群</a><br/>
 	<a href="${pageContext.request.contextPath}/PageServlet?way=4">查看所有用户</a><br/>
 	<div style="float:left;"> <span onclick="Out()">退出账号</span></div><br/><br/>

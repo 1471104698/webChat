@@ -22,8 +22,21 @@ public class Message {
 	
 	private String intro;
 	
+	private List<String> picPaths;
 	
 	
+	
+	
+	public List<String> getPicPaths() {
+		return picPaths;
+	}
+
+
+	public void setPicPaths(List<String> picPaths) {
+		this.picPaths = picPaths;
+	}
+
+
 	public String getNotice() {
 		return notice;
 	}
@@ -72,9 +85,9 @@ public class Message {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public void setContent(String name,String msg) {
-		//谁说的+说的时间+说的内容
-		this.content = name+" "+new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss").format(new Date())+":<br/>"+msg+"<br/>";
+	public void setContent(String name,String msg,String picPath) {
+		//头像+谁说的+说的时间+说的内容
+		this.content = "<img src='../"+picPath+"' width='"+50+"px"+"' height='"+50+"px'>"+name+" "+new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss").format(new Date())+":<br/>"+msg+"<br/>";
 	}
 
 	public String getWelcome() {
