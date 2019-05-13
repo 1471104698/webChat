@@ -1,11 +1,10 @@
 package cn.oy.vo;
 
-public class ContentVo {
+public class OneContentVo {
 	
 	private Integer to;
 	private String msg;
-	private Integer type;
-
+	
 	public Integer getTo() {
 		return to;
 	}
@@ -18,14 +17,9 @@ public class ContentVo {
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
-	public Integer getType() {
-		return type;
-	}
-	public void setType(Integer type) {
-		this.type = type;
-	}
+
 	@Override
 	public String toString() {
-		return "ContentVo [to=" + to + ", msg=" + msg + ", type=" + type + "]";
+		return "OneContentVo [to=" + to + ", msg=" + msg + "]";
 	}
 }

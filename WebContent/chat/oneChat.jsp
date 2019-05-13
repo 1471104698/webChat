@@ -84,8 +84,7 @@
 			 //进行私聊，下面得到私聊的用户，通过json进行传值
 			obj={			
 			 	to:fid,
-   				msg: val,
-   				type:2
+   				msg: val
 		   		} 
 		 
 		 var str=JSON.stringify(obj);	//将对象转换成json字符串
@@ -112,7 +111,7 @@
 					"xid":fid,
 					"uid":uid,
 					"currentPage":currentPage,
-					"way":1
+					"oper":1
 				},
 				success:function(data){
 					//alert(data);
@@ -129,7 +128,7 @@
 	 }
 </script>
 </head>
-<body>
+<body style="background: url(${pageContext.request.contextPath }/images/bg.png) ;background-size:100%">
 	
 	<h1>Web聊天室</h1>
 	<hr>

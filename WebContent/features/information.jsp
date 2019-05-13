@@ -65,7 +65,7 @@ function MoGroup(){
 
 </script>
 </head>
-<body>
+<body style="background: url(${pageContext.request.contextPath }/images/bg.png) ;background-size:100%">
 
 <h1>信息界面</h1>
 	<hr/>
@@ -95,7 +95,7 @@ function MoGroup(){
 		</thead>
 		<tbody>
 		<tr>
-		<td><img src="${pageContext.request.contextPath}/${friend.pic }" width="600px" height="60px"></td>
+		<td><img src="${pageContext.request.contextPath}/${friend.pic }" width="60px" height="60px"></td>
 		<td>${friend.account}</td>
 		<td>${friend.name}</td>
 		<td>${friend.nickName}</td>

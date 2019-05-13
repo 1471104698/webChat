@@ -7,6 +7,10 @@ import cn.oy.pojo.User;
 
 public interface FriendService {
 
+	//通过号账号判断查找用户	
+	User isExistByAccount(String account);	
+	//通过用户名称查找用户
+	List<User> isExistByName(String name);
 	//增加好友
 	int AddFriendService(Integer fid,Integer uid,String group);
 	//增加好友

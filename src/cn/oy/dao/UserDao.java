@@ -6,10 +6,12 @@ import cn.oy.pojo.User;
 
 public interface UserDao {
 	
+	//检查用户是否为空||通过账号称查找用户
+	User isEmptyByAccount(String account);
 	//检查用户是否为空
-	User isEmpty(String account);
-	//检查用户是否为空
-	User isEmpty(Integer id);
+	User isEmptyById(Integer id);
+	//通过用户名称查找用户
+	List<User> isExistByNameDao(String name);
 	//得到用户信息
 	User LoginDao(String account, String pwd);
 	//注册用户

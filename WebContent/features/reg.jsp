@@ -73,7 +73,7 @@
 		<form action=""  onsubmit="return check()">
 			<input type="hidden" name="iden" value="0">
 			<ul>
-				<li>账号：&emsp;&emsp;<input type="text" placeholder="学号" name="account" id="account" maxlength="20"  required onkeyup="this.value=this.value.replace(/[^\w]/g,'');"></li>
+				<li>账号：&emsp;&emsp;<input type="text" placeholder="学号" name="account" id="account" maxlength="20"  required onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></li>
 				<li>密码：&emsp;&emsp;<input type="password" placeholder="密码" name="pwd"  id="pwd"  maxlength="40" required onkeyup="this.value=this.value.replace(/[^\w]/g,'');"></li>
 				<li>姓名：&emsp;&emsp;<input type="text"placeholder="姓名" name="name"   id="name"  required onkeyup="this.value=this.value.replace(/(^\s+)|(\s+$)/g,'');"></li>
 				<li>手机号码：<input type="text" placeholder="手机号码" name="tel" id="tel" required onkeyup="this.value=this.value.replace(/[^\d]/g,'');"></li>
@@ -81,7 +81,7 @@
 				<li>性别：<br/><input type="radio"  placeholder="性别" name="sex" id="sex"  value="男" checked="checked">男
 									  <input type="radio" name="sex"  id="sex" value="女" >女</li>
 				
-				<li>个性签名：&emsp;&emsp;<br/><textarea cols="50" rows="5"  placeholder="个性签名" name="signature" id="signature"  required></textarea><br/></li>
+				<li>个性签名：&emsp;&emsp;<br/><textarea cols="50" rows="5"  placeholder="个性签名"  name="signature" id="signature"  required></textarea><br/></li>
 
 				<li>&emsp;&emsp;&emsp;<input type=submit value="注册">
 			<input type="reset"><br></li>

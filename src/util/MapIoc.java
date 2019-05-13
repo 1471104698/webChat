@@ -22,7 +22,6 @@ import cn.oy.serviceImpl.PictureServiceImpl;
 import cn.oy.serviceImpl.RegServiceImpl;
 import cn.oy.serviceImpl.UpdateInfoServiceImpl;
 import cn.oy.serviceImpl.UpdatePwdServiceImpl;
-import cn.oy.way.AllWay;
 
 public class MapIoc {
 
@@ -46,7 +45,7 @@ public class MapIoc {
 		MAP.put("ps", ps);
 		UpdateInfoService uis=new UpdateInfoServiceImpl();
 		MAP.put("uis", uis);
-		AllWay aw=new AllWay();
+		GetWay aw=new GetWay();
 		MAP.put("aw", aw);
 		GroupChatService gcs=new GroupChatServiceImpl();
 		MAP.put("gcs", gcs);

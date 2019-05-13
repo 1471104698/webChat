@@ -55,7 +55,7 @@ public class GetImageServlet extends HttpServlet {
 			g.setColor(new Color(255, 0, 0));		//设立验证码颜色
 			g.setFont(new Font("Arial", Font.PLAIN, 25));		//设置验证码字体
 			g.drawString(str, 10, 25);				//将验证码在背景画出
-		
+			resp.reset();
 			ImageIO.write(img, "jpeg", resp.getOutputStream());
 			str=str.toLowerCase();	//转小写，达到不区分大小写的作用
 			HttpSession session = req.getSession();

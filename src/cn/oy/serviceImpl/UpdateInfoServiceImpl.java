@@ -10,7 +10,7 @@ public class UpdateInfoServiceImpl implements cn.oy.service.UpdateInfoService {
 	
 	@Override
 	public int updateInfoService(User user) {
-		if(ud.isEmpty(user.getAccount())!=null) {
+		if(ud.isEmptyByAccount(user.getAccount())!=null) {
 			return ud.updateInfoDao(user);
 		}
 		return -1;

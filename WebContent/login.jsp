@@ -6,9 +6,9 @@
 <head>
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<script src='js/prefixfree.min.js'></script>
+<script src='${pageContext.request.contextPath}/js/prefixfree.min.js'></script>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
-<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/normalize.css" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-3.3.1.min.js" charset="UTF-8"></script>
 <title>欢迎NovelIdea来到登录平台</title>
@@ -61,7 +61,6 @@
 		return false;
 	}
 
-
 	</script>
    <h1 >Web聊天系统登录界面</h1>
 		<hr />
@@ -74,7 +73,7 @@
 <!-- 		<li>身份：<input type="radio"  name="identity" value="0" checked="checked">学生	
 				<input type="radio"  name="identity" value="1"  >管理员	
 				<input type="radio"  name="identity" value="2" >群主	</li>	 -->		
-		<li>账号：&emsp;<input type="text" placeholder="账号"  name="account" id="account" maxlength="20" required onkeyup="this.value=this.value.replace(/[^\w]/g,'');" ><br/></li>
+		<li>账号：&emsp;<input type="text" placeholder="账号"  name="account" id="account" maxlength="20" required onkeyup="this.value=this.value.replace(/[^\d]/g,'');" ><br/></li>
 		<li>密码：&emsp;<input type="password" placeholder="密码"  maxlength="40" id="pwd" name="pwd" required onkeyup="this.value=this.value.replace(/[^\w]/g,'');" ><br/></li>
 		
 		<li>验证码：<input type="text" name="vcode" id="vcode" required placeholder="验证码"  maxlength="4" onkeyup="this.value=this.value.replace(/[^\w]/g,'');">
@@ -92,8 +91,10 @@
 	 </section>   
      <script type="text/javascript">
 		function refreshImage(){
-			var img = $("#img1").val();
-			img.src = "${pageContext.request.contextPath}/GetImageServlet?timestamp="+new Date();
+			var d = new Date();
+			var t = d.getTime();
+			var img = document.getElementById("img1");
+			img.src = "${pageContext.request.contextPath}/GetImageServlet?timestamp="+t;
 		}
 	</script>  
 		</div>

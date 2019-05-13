@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import cn.oy.service.FriendService;
-import cn.oy.way.AllWay;
 import net.sf.json.JSONArray;
+import util.GetWay;
 import cn.oy.pojo.Group;
 import cn.oy.pojo.User;
 /**
@@ -33,16 +33,18 @@ public class FriendServlet extends HttpServlet {
 		resp.setCharacterEncoding("UTF-8");
 		req.setCharacterEncoding("UTF-8");
 		FriendService fs=(FriendService) util.MapIoc.MAP.get("fs");
-		int result=0;
+		int result=-1;
 		PrintWriter out =resp.getWriter();
-		int fid;
-		int uid;
+		int fid=-1;
+		int uid=-1;
+		String group=null;		//好友分组名
 		User user=null;
+		List<User> users=null;
 		/**
 		 * 对好友列表的操作
 		 */
-		String gname=req.getParameter("gname");
-		if(gname!=null) {		//不为空执行以下步骤
+		String groupName=req.getParameter("gname");				//分组名
+		if(groupName!=null) {		//不为空执行以下步骤
 			int gh=Integer.parseInt(req.getParameter("gh"));
 			if(gh==1||gh==2||gh==3) {
 				user=(User) req.getSession().getAttribute("user");		//得到当前用户
@@ -50,11 +52,11 @@ public class FriendServlet extends HttpServlet {
 				uid=Integer.parseInt(req.getParameter("uid"));
 				if(gh==1) {											//修改好友分组名称
 				String oldgname=req.getParameter("oldgname");
-				result=fs.moGroupName(gname, uid, oldgname,groups);
+				result=fs.moGroupName(groupName, uid, oldgname,groups);
 			}else if(gh==2){										//创建分组
-				result=fs.createGroupName(gname, uid,groups);		
+				result=fs.createGroupName(groupName, uid,groups);		
 			}else{													//删除分组
-				result=fs.deleteGroupName(gname, uid);
+				result=fs.deleteGroupName(groupName, uid);
 			}
 				if(result>0) {
 				user.setGroups(fs.groupsService(uid));					//更新好友列表菜单
@@ -66,9 +68,10 @@ public class FriendServlet extends HttpServlet {
 					}
 				else
 					out.print("exist");
-			}else {							//查找某个分组下的好友
+			}
+			else if(gh==4){							//查找某个分组下的好友
 			uid=((User)req.getSession().getAttribute("user")).getId();
-			List<User> friends = fs.friendsService(uid, gname);
+			List<User> friends = fs.friendsService(uid, groupName);
 			JSONArray mlist = JSONArray.fromObject(friends);
 			out.print(mlist.toString());	
 			}
@@ -82,21 +85,25 @@ public class FriendServlet extends HttpServlet {
 		/**
 		 * 对好友的操作
 		 */
+		
+		if(null!=req.getParameter("fid")&&null!=req.getParameter("uid")) {
 		fid=Integer.parseInt(req.getParameter("fid"));
 		uid=Integer.parseInt(req.getParameter("uid"));
-		String group=req.getParameter("group");
+		group=req.getParameter("group");		//好友分组名
+		}
+		int account=-1;	//好友查询条件--账号
+		
 		int ch=Integer.parseInt(req.getParameter("ch"));
-		if(ch==1||ch==2) {											//添加好友或删除好友
-			if(ch==1) {	//添加好友			
-			result=fs.AddFriendService(fid, uid, group);
-			}
-			if(ch==2) {	//删除好友
+		if(ch==1||ch==2) {			//添加好友或删除好友
+			if(ch==1) //添加好友			
+			result=fs.AddFriendService(fid, uid, group);			
+			else 	//删除好友
 			result=fs.DelFriendService(fid, uid);
-			}
+			
 		if(result>0) {
 			if(ch==1)
 				fs.AddFriendService(uid, fid, "我的好友");		
-			if(ch==2)
+			else
 				fs.DelFriendService(uid, fid);				
 			out.print("true");
 		}else if(result==0) {
@@ -106,12 +113,12 @@ public class FriendServlet extends HttpServlet {
 		}else {
 			if(ch==1)
 		out.print("already");
-			if(ch==2)
+			else
 		out.print("no");
 		}
-		}else if(ch==3){											//查看信息
+		}else if(ch==3){				//查看信息
 			if(fid==uid) {
-				AllWay aw=(AllWay) util.MapIoc.MAP.get("aw");
+				GetWay aw=(GetWay) util.MapIoc.MAP.get("aw");
 				user=aw.getUserByID(uid);
 			}
 			else
@@ -121,7 +128,7 @@ public class FriendServlet extends HttpServlet {
 				resp.sendRedirect("features/information.jsp");
 			}		
 		}else if(ch==4||ch==5){										
-			if(ch==4) {													//修改昵称
+			if(ch==4) {					//修改昵称
 			String nickName=req.getParameter("nickName");
 			User friend=(User) req.getSession().getAttribute("friend");
 			friend.setNickName(nickName);
@@ -134,6 +141,21 @@ public class FriendServlet extends HttpServlet {
 				out.print("true");
 			}else
 				out.print("false");
+		}else if(ch==6){					//查找好友
+			System.out.println("调用了6");
+			String value=req.getParameter("value");	//查询好友条件--用户名||账号
+			JSONArray mlist =new JSONArray();
+			if(GetWay.isNum(value)) {			//如果全数字则按账号查询
+				System.out.println("value="+account);
+				user = fs.isExistByAccount(value);
+				mlist = JSONArray.fromObject(user);
+				out.print(mlist.toString());
+			}
+			else {			//按名字查询
+				users=fs.isExistByName(value);
+				mlist = JSONArray.fromObject(users);
+				out.print(mlist.toString());
+			}
 		}	
 		out.flush();
 		out.close();

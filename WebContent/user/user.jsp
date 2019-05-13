@@ -12,13 +12,14 @@
 		var uid='${sessionScope.user.id}';
 		var name='${sessionScope.user.name}';
 		function Get(gname){						//显示该列表下的好友
+			alert(123);
 			$.ajax({
 				method:'post',
 				url:'${pageContext.request.contextPath}/FriendServlet',
 				async:true,		//异步
-				data:{"gname":gname,"gh":"0"},
+				data:{"gname":gname,"gh":"4"},
 				success:function(data){
-					//alert(data);
+					alert(data);
 					var majorList=eval("("+data+")");//处理，将json字符串转换为对象    
 					 $("#"+"friend"+gname).html("");			//清空
 					$.each(majorList, function (i, v) {
@@ -27,7 +28,7 @@
 						}else{
 							$("#"+"friend"+gname).append("<img src='../"+v.pic+"' width='"+30+"px"+"' height='"+30+"px'>"+""+v.name+"");	
 						}
-
+					
 						$("#"+"friend"+gname).append(
 								"<input type=button onclick='Chat("+v.id+")'  value='私聊'>"+" "+
 								 "<input type=button  onclick='Del("+v.id+")' value='删除好友'>"+
@@ -135,7 +136,7 @@
 		var flag=window.confirm("选定的分组将被删除，组内若有好友则将被移至默认分组'我的好友'   ,确定删除该分组么");
 		if(flag){
 			if(groupName=='我的好友'){
-				alert("默认分组名不能进行修改");
+				alert("默认分组不能删除");
 				return;
 			}
 			$.ajax({
@@ -156,26 +157,77 @@
 		}
 		
 	}
-		
-	function Out(){				//退出账号
-		var flag=window.confirm("你真的要退出么？？？");
-		if(flag){
-			window.location.href="${pageContext.request.contextPath }/UserOutServlet"; 
+	
+	
+	
+	function Join(data){			//进入群聊
+		//alert($("#adminId").val());
+		var adminId=$(("#")+data).val();
+		//alert(data);
+		if(null!=data){
+			window.location.href="${pageContext.request.contextPath }/ChatServlet?groupId="+data+"&adminId="+adminId; 
 		}
 	}
 	
-	function Join(data){			//进入群聊
-		//alert(data);
-		if(null!=data)
-		window.location.href="${pageContext.request.contextPath }/chat/chat.jsp?groupId="+data; 
+	function SearchFriend(){		//找好友
+		var value=$("#findFriend").val(); 
+		if(""==value){
+			return;
+		}
+	//	alert(value);
+		 $("#friend").html("");			//清空
+		$.ajax({
+			method:'post',
+			url:'${pageContext.request.contextPath}/FriendServlet',
+			async:true,		//异步
+			data:{"value":value,"ch":"6"},
+				
+			success:function(data){
+				var users=eval("("+data+")");//处理，将json字符串转换为对象  
+				//alert(data);
+				 $("#friend").html("");			//清空
+				$.each(users, function (i, v) {
+					$("#friend").append(v.name+"("+v.id+")"+"<input type=button onclick='Add("+v.id+")'  value='加好友'>"+
+							
+							"<br/>"
+					);			
+				});	
+			}
+		});
 	}
 	
+	function Add(u){			//添加好友
+		
+		var flag=window.confirm("是否添加对方为好友");
+		if(flag){
+			if(u==1){
+				alert("添加失败");
+				return;
+			}
+		$.ajax({
+			method:'post',
+			url:'${pageContext.request.contextPath}/FriendServlet',
+			async:true,		//异步
+			data:{"fid":u,"uid":uid,"ch":"1","group":"我的好友"},
+				
+			success:function(result){
+				if(result=="true")
+					alert("添加成功");	
+				else if(result=="self")
+					alert("不能添加自己为好友");		
+				else if(result=="false")
+					alert("添加失败");
+				else
+					alert("你们已经是好友");
+			}			
+		});
+		}
+	}
 	
-	function Search(){				//找群
+	function SearchGroup(){				//找群
 
-		var value=$("#find").val(); 
+		var value=$("#findGroup").val(); 
 		if(""==value){
-			alert("查询条件不能为空");
 			return;
 		}
 		//alert(value);
@@ -240,7 +292,7 @@
 		}
 	}
 	
-	function CreateGroup(){
+	function CreateGroup(){			//创建群
 		var value=$("#createGroup").val();
 		if(""==value){
 			alert("群名不能为空");
@@ -264,30 +316,45 @@
 		}
 	}
 	
-	function upload(){
+	function Out(){				//退出账号
+		var flag=window.confirm("你真的要退出么？？？");
+		if(flag){
+			window.location.href="${pageContext.request.contextPath }/UserOutServlet"; 
+		}
+	}
+	
+	function upload(){			//图片上传
 		var fileName=$("#file").val();
 		if(null==fileName)
 		return false;
 		else
 		return true;
+		
 	}
 		
 </script>
 </head>
-<body>
+<body style="background: url(${pageContext.request.contextPath }/images/bg.png) ;background-size:100%">
 
 	<c:if test="${sessionScope.user.iden eq 0 }">
 	<h1>用户界面</h1>
 	<hr/>
+	</c:if>
+	<c:if test="${sessionScope.user.iden eq 1 }">
+	<h1>管理员界面</h1>
+	<hr/>
+	</c:if>
 	<h3>用户名：${sessionScope.user.name}</h3>		
 	
 	<img src="${pageContext.request.contextPath}/${user.pic }" width="100px" height="100px">
-	<form action="${pageContext.request.contextPath}/PicServlet" enctype="multipart/form-data" onsubmit="return upload()">
-	<input type="file" id="file" value="选择头像"  value="upload/male.png">
+	<!-- 只能用post方法，不能用get，因为用get会将数据放在地址栏，大约4k大小，文件不只4k -->
+	<form action="${pageContext.request.contextPath}/ImageServlet" enctype="multipart/form-data" method="post" onsubmit="return upload()">
+	<input type="file" id="file" name="file" value="选择头像" >
 	<input type="submit" value="点击上传">
 	</form>
 	<br/>
 	
+	<c:if test="${sessionScope.user.iden eq 0 }">
 	<a href="${pageContext.request.contextPath}/features/updateInfo.jsp">修改个人信息</a><br/>
 	<a href="${pageContext.request.contextPath}/features/updatePwd.jsp">修改密码</a><br/><br/><br/>
 	   <div style="float:left;"> <span onclick="Out()">退出账号</span></div><br/><br/>
@@ -295,6 +362,7 @@
 	<h2>我加入的群聊：</h2>
 	<c:forEach items="${user.groupChats }" var="groupChat">
 	${groupChat.name }(${groupChat.id })
+	<input type="hidden" id="${groupChat.id }" value='${groupChat.adminId }'/>
 	<button onclick="Join('${groupChat.id }')">进入群聊</button>
 	<button onclick="OutGroupChat('${groupChat.id }')">退群</button><br/>
 	</c:forEach>
@@ -306,14 +374,17 @@
 	
 	
 	<h3>找群：</h3>
-	<input id="find">
-	<button onclick="Search()">点击查找</button>
+	<input id="findGroup">
+	<button onclick="SearchGroup()">点击查找</button>
 	<div  style="width: 400px; height: 100px; overflow: scroll; border: 1px solid;" 
         id="groupChat"></div><br/><br/>
+        
+     <h3>找好友：</h3>
+	<input id="findFriend">
+	<button onclick="SearchFriend()">点击查找</button>
+	<div  style="width: 400px; height: 100px; overflow: scroll; border: 1px solid;" 
+        id="friend"></div><br/><br/>   
 	<div>   
-	
-	
-	
 	<input id="create"><button onclick="Create()">创建分组</button>
 	<h2>好友列表：</h2>
 	<c:forEach items="${user.groups }" var="group">
@@ -326,12 +397,11 @@
   </div>
   </c:if>
   
+  
+  
   <c:if test="${sessionScope.user.iden eq 1 }">
-	<h1>管理员界面</h1>
-	<hr/>
-	<img src="${pageContext.request.contextPath}/${user.pic }" width="100px" height="100px"><br/>
-	<a href="${pageContext.request.contextPath}/PageServlet?way=3">查看所有群</a><br/>
-	<a href="${pageContext.request.contextPath}/PageServlet?way=4">查看所有用户</a><br/>
+	<a href="${pageContext.request.contextPath}/PageServlet?oper=3">查看所有群</a><br/>
+	<a href="${pageContext.request.contextPath}/PageServlet?oper=4">查看所有用户</a><br/>
 	<div style="float:left;"> <span onclick="Out()">退出账号</span></div><br/><br/>
   </c:if>
 </body>

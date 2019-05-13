@@ -8,9 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import cn.oy.pojo.User;
-import cn.oy.service.FriendService;
 import cn.oy.service.RegService;
-import cn.oy.way.AllWay;
 
 
 
@@ -26,9 +24,7 @@ public class RegServlet extends HttpServlet {
     	resp.setContentType("text/html;charset=utf-8");
 		resp.setCharacterEncoding("UTF-8");
 		req.setCharacterEncoding("UTF-8");
-		FriendService fs=(FriendService) util.MapIoc.MAP.get("fs");
 		RegService rs=(RegService) util.MapIoc.MAP.get("rs");
-		AllWay aw=(AllWay) util.MapIoc.MAP.get("aw");
 		int result=-1;
 		
 	    	    
@@ -43,8 +39,6 @@ public class RegServlet extends HttpServlet {
 		PrintWriter out =resp.getWriter();
 		result=rs.regService(user);
 		if(result>0) {
-			user=aw.getUserByAccount(account);
-			fs.createGroupName("我的好友", user.getId(),null);			//创建一个默认好友分组列表
 			out.print("true");
 		}else {
 			out.print("false");

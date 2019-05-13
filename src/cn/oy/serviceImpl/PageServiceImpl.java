@@ -63,17 +63,17 @@ public class PageServiceImpl implements PageService {
 			return -1;
 		}
 		
-		//得到该群下的所有用户及信息或得到所有用户,分页查询	
+		//得到所有用户,分页查询	
 		@Override
-		public Page getUser(String current, Integer pageSize,Integer groupId,Integer way) {	
+		public Page getUser(String current, Integer pageSize,Integer way) {	
 			gcd=new GroupChatDaoImpl();
 				if(null==current||""==current) {
 					currentPage=0;
 				}else {
 					currentPage=Integer.parseInt(current);
 				}
-				totalCount=gcd.totalSizeDao(groupId, way);
-				users = gcd.getUserDao(currentPage,pageSize,groupId);
+				totalCount=gcd.totalSizeDao(null, way);
+				users = gcd.getUserDao(currentPage,pageSize,null);
 				page=new Page(currentPage, pageSize, totalCount, null, users);
 				return page;
 

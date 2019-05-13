@@ -13,7 +13,7 @@ public class UpdatePwdServiceImpl implements UpdatePwdService {
 		if(!newPwd.equals(cfPwd))
 			return -2;
 
-		if(ud.isEmpty(account)!=null) {
+		if(ud.isEmptyByAccount(account)!=null) {
 			return ud.updatePwdDao(newPwd, account);
 		}
 		return -1;

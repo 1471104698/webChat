@@ -18,7 +18,7 @@ public class ImplD implements UserDao {
 	ResultSet rs=null;
 	User u=null;
 	int result=-1;
-	
+	List<User> users=null;
 	//登录并得到用户信息
 	@Override
 	public User LoginDao(String account, String pwd) {
@@ -65,10 +65,52 @@ public class ImplD implements UserDao {
 		return u;
 	}
 	
-	
+	//通过用户名称查找用户
+		@Override
+		public List<User> isExistByNameDao(String name) {
+			users=new ArrayList<User>();
+			try {
+				con=du.getCon();
+				//创建Sql命令
+				String sql="SELECT * FROM users WHERE true_name like ?";		
+				//创建Sql命令对象
+				psta=(PreparedStatement) con.prepareStatement(sql);
+				//给占位符赋值
+				psta.setString(1, "%"+name+"%");
+				
+				//执行，执行多少条语句，返回值则为多少
+				rs=psta.executeQuery();
+				while(rs.next()) {
+				u=new User();
+				u.setAccount(rs.getString("account"));
+				u.setAge(rs.getInt("age"));
+				u.setId(rs.getInt("uid"));
+				u.setName(rs.getString("true_name"));
+				u.setSex(rs.getString("sex"));
+				u.setSignature(rs.getString("signature"));
+				u.setTel(rs.getString("tel"));
+				users.add(u);
+				}
+			} catch (SQLException e) {	
+				e.printStackTrace();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}finally {
+				try {	//关闭资源
+					rs.close();
+					du.close(psta, con);
+				} catch (SQLException e2) {
+					e2.printStackTrace();
+				}catch(Exception e3) {
+					e3.printStackTrace();
+				}
+			}
+			return users;
+		}
 	
 	//通过账户查询用户是否为空
-	public User isEmpty(String account) {
+	public User isEmptyByAccount(String account) {
+		System.out.println("account="+account);
 		try {
 			con=du.getCon();
 			//创建Sql命令
@@ -107,16 +149,15 @@ public class ImplD implements UserDao {
 	}
 	//通过id查询账户是否为空
 		@Override
-		public User isEmpty(Integer id) {
+		public User isEmptyById(Integer id) {
 			try {
 				con=du.getCon();
 				//创建Sql命令
-				String sql="select *from users u,user_pic up where u.uid =? and up.uid=?";	// 
+				String sql="select *from users u,user_pic up where u.uid =? and up.uid=u.uid";	// 
 				//创建Sql命令对象
 				psta=(PreparedStatement) con.prepareStatement(sql);
 				//给占位符赋值
 				psta.setInt(1, id);
-				psta.setInt(2, id);
 				rs=psta.executeQuery();
 				if(rs.next()) {   //只有一个，因此不需要用while，用if 	
 					u=new User();
@@ -303,21 +344,21 @@ public class ImplD implements UserDao {
 		return result;
 	}
 
-	//查询用户信息
+	//查询好友信息
 	@Override
 	public User SeeFriendDao(Integer fid,Integer uid) {
 		try {
 			con=du.getCon();
-			String sql="SELECT * FROM users u, friends f WHERE u.uid=? AND f.f_fid=u.uid"
-					+ " AND f.f_uid=?";
+			String sql="SELECT * FROM users u, friends f,user_pic up"
+					+ " WHERE u.uid=? AND f.f_fid=u.uid AND f.f_uid=? AND up.uid=u.uid";		//这里up.uid=u.uid是一一对应的，只有一个因此不用加限制条件
 			psta=con.prepareStatement(sql);
 			
 			psta.setInt(1, fid);
-			psta.setInt(2, fid);
 			psta.setInt(2, uid);
 			rs=psta.executeQuery();
 			if(rs.next()) {
 				u=new User();
+				u.setPic(rs.getString("picPath"));
 				u.setNickName(rs.getString("f_name"));
 				u.setAccount(rs.getString("account"));
 				u.setId(rs.getInt("uid"));
@@ -420,9 +461,9 @@ public class ImplD implements UserDao {
 		try {
 			con=du.getCon();
 			//创建Sql命令
-			String sql="SELECT * FROM users u ,friends WHERE u.uid IN"
-					+ " (SELECT f_fid FROM friends WHERE f_uid=? AND f_groupname=? ) AND"
-					+ " f_fid=u.uid and f_uid=?";
+			String sql="SELECT * FROM users u ,friends,user_pic up WHERE u.uid "
+					+ "IN (SELECT f_fid FROM friends "
+					+ "WHERE f_uid=? AND f_groupname=? ) AND  f_fid=u.uid AND f_uid=? AND up.uid=u.uid";
 					
 			psta=(PreparedStatement) con.prepareStatement(sql);
 			//给占位符赋值
@@ -432,6 +473,7 @@ public class ImplD implements UserDao {
 			rs=psta.executeQuery();
 			while(rs.next()) {  
 				u=new User();
+				u.setPic(rs.getString("picPath"));
 				u.setNickName(rs.getString("f_name"));
 				u.setId(rs.getInt("uid"));
 				u.setName(rs.getString("true_name"));
@@ -642,6 +684,9 @@ public class ImplD implements UserDao {
 		
 		return result;
 	}
+
+
+	
 
 
 
